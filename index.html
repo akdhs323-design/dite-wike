@@ -1148,22 +1148,22 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
                 setTimeout(() => {
                     const activeModel = document.getElementById('simModel').value;
                     const resTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    const msgId = 'msg-' + Math.random().toString(36).substr(2, 9);
+                    const msgId = 'msg-' + Math.random().toString(36).substring(2, 11);
 
-                    // Post citation processing emulator
+                    // Post citation processing emulator (Highly stable String Replace implementation)
                     let finalText = generatedOutput;
                     let footer = "\n\n────────────────────────\n";
                     if (isMusic) {
-                        finalText = finalText.replace(/\[\[1\] 멜론 공식 차트\]\(https:\/\/www.melon.com\/chart\/index.htm\)/g, "[[1] 멜론 공식 차트](<https://www.melon.com/chart/index.htm>)");
+                        finalText = finalText.replaceAll("[[1] 멜론 공식 차트](https://www.melon.com/chart/index.htm)", "[[1] 멜론 공식 차트](<https://www.melon.com/chart/index.htm>)");
                         footer += "[[1] 멜론 공식 차트](<https://www.melon.com/chart/index.htm>)\n";
                         finalText += footer;
                     } else if (isSamsung) {
-                        finalText = finalText.replace(/\[\[1\] 삼성전자 공식 사이트\]\(https:\/\/www.samsung.com\/sec\/\)/g, "[[1] 삼성전자 공식 사이트](<https://www.samsung.com/sec/>)");
-                        finalText = finalText.replace(/\[\[2\] 나무위키\]\(https:\/\/namu.wiki\/w\/%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90\)/g, "[[2] 나무위키](<https://namu.wiki/w/%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90>)");
+                        finalText = finalText.replaceAll("[[1] 삼성전자 공식 사이트](https://www.samsung.com/sec/)", "[[1] 삼성전자 공식 사이트](<https://www.samsung.com/sec/>)");
+                        finalText = finalText.replaceAll("[[2] 나무위키](https://namu.wiki/w/%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90)", "[[2] 나무위키](<https://namu.wiki/w/%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90>)");
                         footer += "[[1] 삼성전자 공식 사이트](<https://www.samsung.com/sec/>)\n[[2] 나무위키](<https://namu.wiki/w/%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90>)\n";
                         finalText += footer;
                     } else if (isPolicy) {
-                        finalText = finalText.replace(/\[\[공식 링크\] 디테봇 개인정보처리방침\/이용안내\/규칙\]\(https:\/\/app.notion.com\/p\/39c6106f2b278011a4f6c50b5a854ecd\)/g, "[[1] 디테봇 개인정보처리방침/이용안내/규칙](<https://app.notion.com/p/39c6106f2b278011a4f6c50b5a854ecd>)");
+                        finalText = finalText.replaceAll("[[공식 링크] 디테봇 개인정보처리방침/이용안내/규칙](https://app.notion.com/p/39c6106f2b278011a4f6c50b5a854ecd)", "[[1] 디테봇 개인정보처리방침/이용안내/규칙](<https://app.notion.com/p/39c6106f2b278011a4f6c50b5a854ecd>)");
                         footer += "[[1] 디테봇 개인정보처리방침/이용안내/규칙](<https://app.notion.com/p/39c6106f2b278011a4f6c50b5a854ecd>)\n";
                         finalText += footer;
                     }
