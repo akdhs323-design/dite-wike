@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디테봇 (Dite Bot) 공식 위키 및 테크 백서</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter, Pretendard, Fira Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', 'Noto Sans KR', 'Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'Courier New', 'monospace']
+                    },
+                    colors: {
+                        discord: {
+                            gray: '#313338',
+                            dark: '#1e1f22',
+                            light: '#35363c',
+                            blue: '#5865f2',
+                            green: '#23a55a',
+                            yellow: '#f0b232',
+                            red: '#f23f43',
+                            sidebar: '#2b2d31'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Pretendard', 'Noto Sans KR', 'sans-serif';
+            background-color: #1e1f22;
+            color: #dbdee1;
+            scroll-behavior: smooth;
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1f22;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2b2d31;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #35363c;
+        }
+        .tab-active {
+            border-bottom-color: #5865f2;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-discord-dark border-b border-[#2b2d31]">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-discord-blue flex items-center justify-center shadow-lg transform hover:rotate-12 transition-transform">
+                <i data-lucide="bot" class="text-white w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="text-base md:text-lg font-extrabold text-white flex items-center gap-2">
+                    Dite Bot <span class="bg-discord-blue text-[10px] text-white px-2 py-0.5 rounded-full font-bold">Tech Wiki v7.3</span>
+                </h1>
+                <p class="text-[11px] text-slate-400">지능형 다중 동기화 Discord 에이전트 상세 백서</p>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-300">
+            <a href="#intro" class="hover:text-white transition-colors">소개</a>
+            <a href="#architecture" class="hover:text-white transition-colors">시스템 설계</a>
+            <a href="#commands" class="hover:text-white transition-colors">명령어 레퍼런스</a>
+            <a href="#database" class="hover:text-white transition-colors">데이터베이스 탐색기</a>
+            <a href="#simulator" class="text-discord-blue font-semibold hover:underline flex items-center gap-1">
+                <i data-lucide="terminal" class="w-4 h-4"></i> 실시간 샌드박스
+            </a>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <button onclick="copyDomain()" class="flex items-center space-x-1 px-3 py-1.5 bg-[#2b2d31] hover:bg-discord-light text-xs rounded text-slate-200 transition-all border border-[#3f4248]">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                <span class="hidden sm:inline">도메인 복사</span>
+            </button>
+            <a href="https://app.notion.com/p/39c6106f2b278011a4f6c50b5a854ecd" target="_blank" class="flex items-center space-x-1 px-3 py-1.5 bg-[#42444a] hover:bg-slate-600 text-xs text-white rounded transition-all">
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                <span>공식 노션</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Container Layout -->
+    <div class="flex-1 flex flex-col md:flex-row">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 bg-discord-dark p-6 border-r border-[#2b2d31] shrink-0">
+            <div class="space-y-6">
+                <!-- Search Box -->
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                    </span>
+                    <input type="text" id="wikiSearch" oninput="filterWiki()" placeholder="검색어를 입력하세요..." class="w-full pl-9 pr-4 py-2 bg-[#111214] text-xs rounded border border-[#2b2d31] focus:outline-none focus:border-discord-blue text-white">
+                </div>
+
+                <!-- Navigation Groups -->
+                <nav class="space-y-6 text-xs md:text-sm" id="sidebarNav">
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">시작하기</h3>
+                        <div class="space-y-1">
+                            <a href="#intro" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                                <i data-lucide="book-open" class="w-4 h-4 text-discord-blue"></i>
+                                <span>디테봇 개요</span>
+                            </a>
+                            <a href="#quickstart" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                                <i data-lucide="play" class="w-4 h-4 text-discord-green"></i>
+                                <span>직접 배포 및 가동</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">아키텍처 상세 정보</h3>
+                        <div class="space-y-1">
+                            <a href="#architecture" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                                <i data-lucide="cpu" class="w-4 h-4 text-discord-yellow"></i>
+                                <span>AI 로테이션 및 품질 검증</span>
+                            </a>
+                            <a href="#hybrid-search" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                                <i data-lucide="zap" class="w-4 h-4 text-cyan-400"></i>
+                                <span>하이브리드 병렬 검색 흐름</span>
+                            </a>
+                            <a href="#memory-sync" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                                <i data-lucide="history" class="w-4 h-4 text-purple-400"></i>
+                                <span>기억 동기화 & 영속 기전</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">레퍼런스 & 스키마</h3>
+                        <div class="space-y-1">
+                            <a href="#commands" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                                <i data-lucide="terminal" class="w-4 h-4 text-emerald-400"></i>
+                                <span>명령어 명세서</span>
+                            </a>
+                            <a href="#database" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                                <i data-lucide="database" class="w-4 h-4 text-[#f0b232]"></i>
+                                <span>데이터베이스 스크립트</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-[#2b2d31]">
+                        <a href="#simulator" class="flex items-center space-x-2 px-3 py-2.5 bg-discord-blue/10 text-discord-blue hover:bg-discord-blue/20 rounded-md font-bold transition-all text-center justify-center">
+                            <i data-lucide="play-circle" class="w-4 h-4 animate-pulse"></i>
+                            <span>실시간 가상 시뮬레이터</span>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 bg-discord-gray p-6 md:p-10 max-w-6xl overflow-y-auto space-y-16">
+            
+            <!-- Toast notification container -->
+            <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-[#23a55a] text-white px-4 py-3 rounded-lg shadow-2xl flex items-center space-x-2 animate-bounce">
+                <i data-lucide="check-circle" class="w-5 h-5"></i>
+                <span id="toastMsg" class="text-xs font-semibold">성공적으로 처리되었습니다.</span>
+            </div>
+
+            <!-- Intro / Overview Section -->
+            <section id="intro" class="scroll-mt-24 space-y-4">
+                <div class="flex items-center space-x-2 text-discord-blue">
+                    <i data-lucide="info" class="w-5 h-5 animate-bounce"></i>
+                    <span class="text-sm font-semibold tracking-wider uppercase">Overview</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-black text-white tracking-tight">디테봇(Dite Bot) 개요</h2>
+                <p class="text-slate-300 leading-relaxed text-sm md:text-base">
+                    디테봇은 디스코드(Discord) 생태계에서 활동하는 고성능 하이브리드 대화 AI 시스템입니다. <strong>Gemini-3.1-Flash-Lite</strong> 모델을 메인 신경망으로 활용하며, 디스코드 봇 구동 중 발생할 수 있는 자원 및 계정 한도 초과 오류를 능동적으로 우회하기 위해 <strong>다중 API 로테이션</strong> 및 <strong>실시간 검증 모듈</strong>을 내장하고 있습니다. 단순 응답을 넘어 로컬 SQLite 데이터베이스를 기반으로 동작하여 유저의 행동 양식, 누적 채팅, 제재 상태 및 영속 기억들을 실시간 보정 동기화합니다.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+                    <div class="bg-[#2b2d31] p-4 rounded-lg border border-[#3f4248] flex flex-col justify-between">
+                        <div class="flex items-start space-x-2">
+                            <i data-lucide="key" class="w-5 h-5 text-discord-blue"></i>
+                            <h4 class="font-bold text-white text-xs">다중 API 로테이션</h4>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-2">API 키를 풀(Pool) 단위로 유지하고, 순차 로테이션을 가동하여 특정 키 만료 시 401 오류를 탐지해 실시간 격리합니다.</p>
+                    </div>
+                    <div class="bg-[#2b2d31] p-4 rounded-lg border border-[#3f4248] flex flex-col justify-between">
+                        <div class="flex items-start space-x-2">
+                            <i data-lucide="search" class="w-5 h-5 text-discord-green"></i>
+                            <h4 class="font-bold text-white text-xs">하이브리드 병렬 검색</h4>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-2">DuckDuckGo Lite GET 및 Wikipedia API를 비동기 병렬 조회하여 최적화된 출처 각주 마크다운 리포트를 자동 완성합니다.</p>
+                    </div>
+                    <div class="bg-[#2b2d31] p-4 rounded-lg border border-[#3f4248] flex flex-col justify-between">
+                        <div class="flex items-start space-x-2">
+                            <i data-lucide="archive" class="w-5 h-5 text-discord-yellow"></i>
+                            <h4 class="font-bold text-white text-xs">비파괴 소프트 삭제</h4>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-2">사용자나 관리자가 기억 초기화를 시행할 때, 실제 런타임 풀에서만 삭제하고 DB 아카이브 격리실에 영구 백업 보존합니다.</p>
+                    </div>
+                    <div class="bg-[#2b2d31] p-4 rounded-lg border border-[#3f4248] flex flex-col justify-between">
+                        <div class="flex items-start space-x-2">
+                            <i data-lucide="user-x" class="w-5 h-5 text-discord-red"></i>
+                            <h4 class="font-bold text-white text-xs">스마트 타임 정지 가드</h4>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-2">`30m`, `5h`, `7d` 등의 한글/영문 융합 정지 기한 포맷을 파싱하여 타겟 사용자 ID를 정교하게 차단 관리합니다.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Architecture deep-dive with interactive tabs -->
+            <section id="architecture" class="scroll-mt-24 space-y-6">
+                <div class="flex items-center space-x-2 text-discord-green">
+                    <i data-lucide="cpu" class="w-5 h-5"></i>
+                    <span class="text-sm font-semibold tracking-wider uppercase">Core Architecture</span>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white">디테 아키텍처 상세 백서</h2>
+                
+                <!-- Tab Headers -->
+                <div class="flex border-b border-[#2b2d31] text-xs md:text-sm overflow-x-auto gap-2">
+                    <button onclick="switchTab('tab-api')" id="btn-tab-api" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-white transition-all font-semibold whitespace-nowrap">API 로테이션 & 격리</button>
+                    <button onclick="switchTab('tab-search')" id="btn-tab-search" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-white transition-all font-semibold whitespace-nowrap">하이브리드 정보 수집</button>
+                    <button onclick="switchTab('tab-memory')" id="btn-tab-memory" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-white transition-all font-semibold whitespace-nowrap">메모리 동기화 & 가드</button>
+                    <button onclick="switchTab('tab-cleanup')" id="btn-tab-cleanup" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-white transition-all font-semibold whitespace-nowrap">자정 자동 청소 (Diet)</button>
+                </div>
+
+                <!-- Tab Contents -->
+                <div class="space-y-4">
+                    <!-- Tab 1: API Rotation -->
+                    <div id="content-tab-api" class="tab-content hidden bg-discord-dark rounded-xl p-6 border border-[#2b2d31] space-y-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="p-1.5 bg-discord-blue/10 rounded text-discord-blue"><i data-lucide="key-round" class="w-5 h-5"></i></span>
+                            <h3 class="text-lg font-bold text-white">다중 키 검증 및 동적 폴트 톨러런스 (Fault Tolerance)</h3>
+                        </div>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            디테봇은 Google Gemini API의 호출량 상한(Rate Limit) 및 폐기 계정으로 인한 작동 중단을 예방하기 위해 독창적인 키 순환 메커니즘을 사용합니다. 
+                        </p>
+                        <div class="bg-[#111214] p-4 rounded text-xs font-mono text-slate-400 space-y-1 overflow-x-auto">
+                            <p class="text-slate-500"># ver_7.3.py 다중 키 라운드로빈 로테이션 & 격리 슈도 코드</p>
+                            <p>1. <span class="text-discord-blue">on_ready</span> 단계에서 <span class="text-[#23a55a]">check_and_validate_api_keys()</span> 비동기 백그라운드 태스크 실행</p>
+                            <p>2. 등록된 모든 키에 가벼운 <span class="text-discord-yellow">"ping"</span> 테스트 호출을 수행하여 유효성 선 검사 시행</p>
+                            <p>3. 만약 API 응답 오류 중 <span class="text-discord-red">"401" / "unauthenticated" / "service account is deleted"</span> 감지 시 즉각 해당 키 차단</p>
+                            <p>4. 런타임 클라이언트 리스트(<span class="text-purple-400">active_keys</span>)에서 제거 격리 후 설정 창에 경고 기록</p>
+                            <p>5. 대화 처리 시 <span class="text-cyan-400">key_index = (key_index + 1) % len(active_keys)</span> 기법으로 라운드로빈 자동 우회 순환</p>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Hybrid Search Pipeline -->
+                    <div id="content-tab-search" class="tab-content hidden bg-discord-dark rounded-xl p-6 border border-[#2b2d31] space-y-4">
+                        <div id="hybrid-search" class="flex items-center space-x-2 scroll-mt-24">
+                            <span class="p-1.5 bg-discord-green/10 rounded text-discord-green"><i data-lucide="globe-2" class="w-5 h-5"></i></span>
+                            <h3 class="text-lg font-bold text-white">초고속 병렬 웹 정보 합성 파이프라인 (Lite GET 기반)</h3>
+                        </div>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            공신력 있는 실시간 데이터를 수집하기 위해, 복잡한 셀레늄(Selenium) 동적 브라우저 구동보다 수십 배 빠른 **DuckDuckGo Lite GET 및 Wikipedia API**를 연동합니다.
+                        </p>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs font-mono">
+                            <div class="bg-[#111214] p-4 rounded text-slate-300 space-y-2 border border-[#2b2d31]">
+                                <h4 class="text-white font-bold">// 1단계: 검색어 융합 & 우회</h4>
+                                <p class="text-slate-400">사용자가 질문한 문맥을 분석하여 AI가 직접 최적의 검색어 추출 (나무위키, 위키백과 등 검색 지점 주입 강제화)</p>
+                                <p class="text-slate-400">특정 단어(삼성, 디테, Notion 개인정보 등) 감지 시 불필요한 네트워크 대기 없이 하드코딩 메모리 캐시 데이터를 자동 즉시 매핑하여 속도 보장</p>
+                            </div>
+                            <div class="bg-[#111214] p-4 rounded text-slate-300 space-y-2 border border-[#2b2d31]">
+                                <h4 class="text-white font-bold">// 2단계: 자가 치유(Self-Healing) 복원</h4>
+                                <p class="text-slate-400">DuckDuckGo가 차단되거나 타임아웃 발생 시, 시스템 다운을 배제하고 즉각 <span class="text-discord-yellow">generate_fallback_search_data()</span> 비동기 백업 엔진 작동</p>
+                                <p class="text-slate-400">Gemini 내장 지식을 사용해 실제와 거의 100% 흡사한 지식 스니펫 및 나무위키 주소를 합성하여 정보 흐름 보전</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Memory Sync -->
+                    <div id="content-tab-memory" class="tab-content hidden bg-discord-dark rounded-xl p-6 border border-[#2b2d31] space-y-4">
+                        <div id="memory-sync" class="flex items-center space-x-2 scroll-mt-24">
+                            <span class="p-1.5 bg-discord-yellow/10 rounded text-discord-yellow"><i data-lucide="database-backup" class="w-5 h-5"></i></span>
+                            <h3 class="text-lg font-bold text-white">영속 기억 보존실 (Real-time DB Syncer)</h3>
+                        </div>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            디테봇은 대화 기록이 유실되는 현상을 막기 위해 사용자별 런타임 기억을 데이터베이스와 실시간 영속 동기화합니다.
+                        </p>
+                        <ul class="text-xs text-slate-300 space-y-2 list-disc pl-5">
+                            <li><strong class="text-white">메모리 제한 및 Capping:</strong> API 토큰 절약을 위해 유저별 세션 대화는 <span class="text-discord-blue">최대 50건(MAX_HISTORY)</span>으로 제한 관리됩니다. 초과 시 선입선출(FIFO) 방식으로 앞 대화를 소멸시킵니다.</li>
+                            <li><strong class="text-white">실시간 백업 트리거:</strong> 유저와 메시지를 주고받은 즉시, <span class="text-discord-green">save_user_memory_to_db()</span>를 비동기로 호출하여 SQLite `user_active_memories` 테이블에 직렬화된 JSON으로 영구 저장합니다.</li>
+                            <li><strong class="text-white">비파괴 격리 삭제 기법:</strong> 유저가 초기화를 요청할 경우 런타임 풀에서는 삭제되지만, 데이터베이스 `deleted_memories` 아카이브로 온전하게 백업 보존되어 추후에 관리자 패널에서 복구 및 트레이싱 조회가 가능합니다.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab 4: Cleanups & Diet -->
+                    <div id="content-tab-cleanup" class="tab-content hidden bg-discord-dark rounded-xl p-6 border border-[#2b2d31] space-y-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="p-1.5 bg-discord-red/10 rounded text-discord-red"><i data-lucide="trash-2" class="w-5 h-5"></i></span>
+                            <h3 class="text-lg font-bold text-white">KST 자정 리셋 스케줄러 & 로그 다이어트 (DB Diet)</h3>
+                        </div>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            봇의 데이터베이스가 끝없이 팽창하여 속도가 저하되는 문제점을 해결하기 위해 KST 자정(오전 12:00) 주기적 클린업 프로세스가 자동으로 실행됩니다.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+                            <div class="bg-[#111214] p-4 rounded border border-[#2b2d31] space-y-2">
+                                <h4 class="text-discord-yellow font-bold flex items-center gap-1">
+                                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 일일 활동 랭킹 초기화
+                                </h4>
+                                <p class="text-slate-400">매일 자정 KST 날짜가 변경되면 `chat_counts` 테이블의 누적 랭킹 정보 데이터를 안전하게 비워 오늘 하루의 새 활동 랭킹을 시작합니다.</p>
+                            </div>
+                            <div class="bg-[#111214] p-4 rounded border border-[#2b2d31] space-y-2">
+                                <h4 class="text-discord-red font-bold flex items-center gap-1">
+                                    <i data-lucide="hard-drive" class="w-3.5 h-3.5"></i> 30일 로그 청소 (DB 다이어트)
+                                </h4>
+                                <p class="text-slate-400">데이터가 장기 적재되어 쓰기 성능이 저하되는 상황을 막고자, 등록 시간 기준 30일이 초과한 정밀 데이터 로그(`message_logs`)는 자동 청소 및 소멸 처리됩니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Deployment Guide Section -->
+            <section id="quickstart" class="scroll-mt-24 space-y-6">
+                <div class="flex items-center space-x-2 text-discord-blue">
+                    <i data-lucide="play" class="w-5 h-5"></i>
+                    <span class="text-sm font-semibold tracking-wider uppercase">Quick Deployment</span>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white">직접 배포 및 가동 안내</h2>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    디테봇은 간결하게 가상 서버(VPS), 라즈베리 파이, 토이 서버 등 환경에서 즉시 구동될 수 있도록 개발되었습니다. 
+                    설치를 완료한 후 아래 실행 커맨드를 이용해 패키지를 구축하세요.
+                </p>
+
+                <div class="bg-discord-dark p-6 rounded-xl border border-[#2b2d31] space-y-4">
+                    <div class="space-y-2">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">가동 절차</h4>
+                        <ol class="text-xs text-slate-300 list-decimal pl-5 space-y-1">
+                            <li>Python 3.11 이상 버전 및 SQLite 패키지가 활성화되어 있는지 확인합니다.</li>
+                            <li><code class="bg-[#111214] px-1.5 py-0.5 rounded text-discord-blue font-mono">pip install -r requirements.txt</code> 명령어를 실행하여 외부 종속성을 수집합니다.</li>
+                            <li>같은 루트 경로에 디스코드 봇 토큰 및 제반 환경이 기입된 <code class="bg-[#111214] px-1.5 py-0.5 rounded text-discord-yellow font-mono">.env</code> 파일을 설정합니다.</li>
+                            <li><code class="bg-[#111214] px-1.5 py-0.5 rounded text-[#23a55a] font-mono">python ver_7.3.py</code> 명령어로 즉시 가동을 시작합니다.</li>
+                        </ol>
+                    </div>
+
+                    <div class="flex items-center justify-between bg-[#111214] px-4 py-2.5 rounded-lg border border-[#2b2d31]">
+                        <span class="text-xs font-mono text-slate-400 flex items-center gap-1">
+                            <i data-lucide="terminal" class="w-4 h-4 text-discord-green"></i> bash 실행 커맨드
+                        </span>
+                        <button onclick="copyCode('shellCommand')" class="text-xs text-discord-blue flex items-center space-x-1 hover:underline">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span>복사</span>
+                        </button>
+                    </div>
+                    <pre class="bg-[#111214] p-4 rounded-lg overflow-x-auto text-xs font-mono text-slate-300 border border-[#2b2d31]" id="shellCommand"># 1. 소스 디렉터리로 이동
+cd /your/ditebot/directory
+
+# 2. 필수 라이브러리 일괄 자동 다운로드
+pip install discord.py google-genai python-dotenv beautifulsoup4 aiohttp selenium
+
+# 3. 디테봇 v7.3 서버 데몬 백그라운드 구동 (로그 보전)
+nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
+                </div>
+            </section>
+
+            <!-- Detailed Database Schema & Explorer -->
+            <section id="database" class="scroll-mt-24 space-y-6">
+                <div class="flex items-center space-x-2 text-discord-yellow">
+                    <i data-lucide="table" class="w-5 h-5"></i>
+                    <span class="text-sm font-semibold tracking-wider uppercase">Database Explorer</span>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white">SQLite3 통합 데이터베이스 명세서</h2>
+                <p class="text-sm text-slate-300">
+                    디테봇 내부 데이터 저장소인 <code class="text-discord-yellow font-mono bg-discord-dark px-1 py-0.5 rounded">bot_data.db</code>의 상세 테이블 스키마 정의 및 샘플 데이터를 시뮬레이션 형태로 탑재했습니다. 테이블명을 선택하여 실제 SQL 구조와 들어가는 샘플값을 교차 매핑하여 볼 수 있습니다.
+                </p>
+
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <!-- Left: Table Tab Selectors -->
+                    <div class="w-full lg:w-1/3 flex flex-col gap-2">
+                        <button onclick="exploreTable('config')" id="btn-db-config" class="w-full text-left p-3.5 bg-discord-dark hover:bg-discord-light rounded-xl border border-[#2b2d31] transition-all flex items-center justify-between">
+                            <span class="font-mono text-xs font-bold text-white">📁 config</span>
+                            <span class="text-[10px] bg-discord-blue/15 text-discord-blue px-2 py-0.5 rounded-full font-semibold">환경 변수</span>
+                        </button>
+                        <button onclick="exploreTable('api_keys')" id="btn-db-api_keys" class="w-full text-left p-3.5 bg-discord-dark hover:bg-discord-light rounded-xl border border-[#2b2d31] transition-all flex items-center justify-between">
+                            <span class="font-mono text-xs font-bold text-white">📁 api_keys</span>
+                            <span class="text-[10px] bg-discord-green/15 text-discord-green px-2 py-0.5 rounded-full font-semibold">Gemini 키</span>
+                        </button>
+                        <button onclick="exploreTable('user_active_memories')" id="btn-db-user_active_memories" class="w-full text-left p-3.5 bg-discord-dark hover:bg-discord-light rounded-xl border border-[#2b2d31] transition-all flex items-center justify-between">
+                            <span class="font-mono text-xs font-bold text-white">📁 user_active_memories</span>
+                            <span class="text-[10px] bg-purple-400/15 text-purple-400 px-2 py-0.5 rounded-full font-semibold">대화 기억</span>
+                        </button>
+                        <button onclick="exploreTable('deleted_memories')" id="btn-db-deleted_memories" class="w-full text-left p-3.5 bg-discord-dark hover:bg-discord-light rounded-xl border border-[#2b2d31] transition-all flex items-center justify-between">
+                            <span class="font-mono text-xs font-bold text-white">📁 deleted_memories</span>
+                            <span class="text-[10px] bg-discord-red/15 text-discord-red px-2 py-0.5 rounded-full font-semibold">격리 보존</span>
+                        </button>
+                        <button onclick="exploreTable('banned_users')" id="btn-db-banned_users" class="w-full text-left p-3.5 bg-discord-dark hover:bg-discord-light rounded-xl border border-[#2b2d31] transition-all flex items-center justify-between">
+                            <span class="font-mono text-xs font-bold text-white">📁 banned_users</span>
+                            <span class="text-[10px] bg-discord-yellow/15 text-discord-yellow px-2 py-0.5 rounded-full font-semibold">정지 가드</span>
+                        </button>
+                    </div>
+
+                    <!-- Right: Table Schema Details and Sample Data Viewer -->
+                    <div class="flex-1 bg-discord-dark rounded-xl border border-[#2b2d31] p-6 space-y-4">
+                        <div>
+                            <h3 id="explorerTableName" class="text-base font-bold text-white font-mono flex items-center gap-1.5">
+                                <i data-lucide="database" class="w-4 h-4 text-discord-blue"></i> TABLE 명세
+                            </h3>
+                            <p id="explorerTableDesc" class="text-xs text-slate-400 mt-1">테이블을 왼쪽에서 선택하면 상세 명세 및 수록 샘플 데이터 열람이 가동됩니다.</p>
+                        </div>
+
+                        <!-- Fields Schema -->
+                        <div class="space-y-2">
+                            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
+                                <i data-lucide="info" class="w-3.5 h-3.5"></i> SQL 필드 정보 (Ddl Schema)
+                            </h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse text-xs font-mono">
+                                    <thead>
+                                        <tr class="border-b border-[#2b2d31] text-slate-500">
+                                            <th class="py-2 px-3">필드 이름</th>
+                                            <th class="py-2 px-3">타입</th>
+                                            <th class="py-2 px-3">제약 조건</th>
+                                            <th class="py-2 px-3">설명</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="explorerSchemaBody" class="divide-y divide-[#1e1f22] text-slate-300">
+                                        <!-- Dynamic injected -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Sample Data -->
+                        <div class="space-y-2">
+                            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
+                                <i data-lucide="eye" class="w-3.5 h-3.5"></i> 샘플 레코드 (Mock Row Data)
+                            </h4>
+                            <div class="bg-[#111214] rounded-lg p-4 overflow-x-auto">
+                                <pre id="explorerSampleData" class="text-xs font-mono text-[#23a55a]">// JSON 형태로 로컬 레코드 데이터 샘플을 출력합니다.</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Commands Reference Section -->
+            <section id="commands" class="scroll-mt-24 space-y-6">
+                <div class="flex items-center space-x-2 text-discord-blue">
+                    <i data-lucide="command" class="w-5 h-5"></i>
+                    <span class="text-sm font-semibold tracking-wider uppercase">Reference</span>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white">디테봇 명령어 사전 및 옵션 가이드</h2>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    디테봇 v7.3 소스 코드에 명세된 모든 디스코드 슬래시 및 일반 접두사 명령어의 완벽한 명세서입니다. 
+                    유저용과 관리자 전용 제어 기전이 엄격하게 가드 처리되어 있습니다.
+                </p>
+
+                <div class="space-y-4">
+                    <div class="bg-discord-dark rounded-xl border border-[#2b2d31] overflow-hidden">
+                        <div class="bg-[#111214] px-4 py-3 border-b border-[#2b2d31] flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-400">슬래시 명령어 (Application Commands)</span>
+                        </div>
+                        <div class="divide-y divide-[#2b2d31] text-xs md:text-sm">
+                            <!-- Cmd 1 -->
+                            <div class="p-4 space-y-1.5 hover:bg-[#313338]/40 transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-mono font-bold text-white">/대화 질문: [문자열] 파일: [첨부파일]</h4>
+                                    <span class="bg-discord-green/10 text-discord-green px-2 py-0.5 rounded text-[10px] font-semibold">일반 유저</span>
+                                </div>
+                                <p class="text-slate-300">디테봇과 실시간 채팅을 나눕니다. 텍스트 문서 파일이나 이미지를 업로드하여 정밀 분석을 수행할 수 있습니다.</p>
+                                <div class="text-[11px] text-slate-400 flex flex-wrap gap-x-4 gap-y-1">
+                                    <span>• <strong>매개변수:</strong> 질문 (필수), 파일 (선택)</span>
+                                    <span>• <strong>동작 필터:</strong> 유해 토픽 차단 가드, 멘션 도배 원천 방어 작동</span>
+                                </div>
+                            </div>
+                            <!-- Cmd 2 -->
+                            <div class="p-4 space-y-1.5 hover:bg-[#313338]/40 transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-mono font-bold text-white">/기억초기화</h4>
+                                    <span class="bg-discord-green/10 text-discord-green px-2 py-0.5 rounded text-[10px] font-semibold">일반 유저</span>
+                                </div>
+                                <p class="text-slate-300">자신이 디테와 나누었던 이전 모든 대화 기억들을 비우고 첫 대화 상태로 포맷합니다.</p>
+                                <div class="text-[11px] text-slate-400 flex flex-wrap gap-x-4 gap-y-1">
+                                    <span>• <strong>매개변수:</strong> 없음</span>
+                                    <span>• <strong>데이터 이력 이식:</strong> SQLite3 <code class="text-discord-red font-mono bg-discord-gray px-1 rounded">deleted_memories</code> 격리실로 자동 비파괴 보존 이식</span>
+                                </div>
+                            </div>
+                            <!-- Cmd 3 -->
+                            <div class="p-4 space-y-1.5 hover:bg-[#313338]/40 transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-mono font-bold text-white">/설정</h4>
+                                    <span class="bg-discord-red/10 text-discord-red px-2 py-0.5 rounded text-[10px] font-semibold">봇 개발자 전용</span>
+                                </div>
+                                <p class="text-slate-300">디테봇의 핵심 동적 제어를 처리하는 관리자 종합 패널 GUI를 반환합니다.</p>
+                                <div class="text-[11px] text-slate-400 flex flex-wrap gap-x-4 gap-y-1">
+                                    <span>• <strong>제어 탭:</strong> Gemini API 키 관리, 허용 채널 가드, 관리자 임명, Gemini 구동 모델 변경, 유저 세션 대화 기억 수정, 이용정지 차단(Ban) 일괄 관리</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-discord-dark rounded-xl border border-[#2b2d31] overflow-hidden">
+                        <div class="bg-[#111214] px-4 py-3 border-b border-[#2b2d31]">
+                            <span class="text-xs font-bold text-slate-400">접두사 텍스트 명령어 (Prefix Commands)</span>
+                        </div>
+                        <div class="divide-y divide-[#2b2d31] text-xs md:text-sm">
+                            <div class="p-4 space-y-1.5 hover:bg-[#313338]/40 transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-mono font-bold text-white">!기억초기화</h4>
+                                    <span class="bg-discord-green/10 text-discord-green px-2 py-0.5 rounded text-[10px] font-semibold">일반 유저</span>
+                                </div>
+                                <p class="text-slate-300">슬래시 명령어를 사용하기 곤란한 환경에서 일반 채팅 메시지로 대화 역사 세션을 지우고 초기화합니다.</p>
+                            </div>
+                            <div class="p-4 space-y-1.5 hover:bg-[#313338]/40 transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-mono font-bold text-white">디테 정보</h4>
+                                    <span class="bg-discord-green/10 text-discord-green px-2 py-0.5 rounded text-[10px] font-semibold">일반 유저</span>
+                                </div>
+                                <p class="text-slate-300">등록된 Gemini 클라이언트의 활성 키별 호출 성공/실패 횟수, 지연(Latency), 가동 중인 신경망 AI 모델을 정밀 임베드로 반환합니다.</p>
+                            </div>
+                            <div class="p-4 space-y-1.5 hover:bg-[#313338]/40 transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-mono font-bold text-white">디테 통계 / 디테 채팅랭크</h4>
+                                    <span class="bg-discord-green/10 text-discord-green px-2 py-0.5 rounded text-[10px] font-semibold">일반 유저</span>
+                                </div>
+                                <p class="text-slate-300">해당 디스코드 서버 내 누적 채팅 점수를 매겨 멤버들의 실시간 참여 랭킹 페이징 리더보드 뷰를 반환합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Expanded Sandbox Simulation Section -->
+            <section id="simulator" class="scroll-mt-24 space-y-6">
+                <div class="flex items-center space-x-2 text-discord-blue">
+                    <i data-lucide="terminal" class="w-5 h-5 animate-pulse"></i>
+                    <span class="text-sm font-semibold tracking-wider uppercase">Interactive Sandbox</span>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white">디테봇 가상 작동 시뮬레이션 샌드박스</h2>
+                <p class="text-sm text-slate-300">
+                    디테봇 v7.3 소스코드의 런타임 알고리즘을 100% 모사한 가상 에뮬레이터입니다. 단순 검색을 포함해, <strong>부적절한 멘션 도배 경고</strong>, <strong>차단된 유저 제재 처리</strong>, <strong>생각 과정 마스킹</strong>, <strong>출처 마크다운 자동 융합</strong>까지 종합 테스트해 볼 수 있습니다.
+                </p>
+
+                <!-- Sandbox Container -->
+                <div class="bg-discord-dark rounded-xl border border-[#2b2d31] overflow-hidden flex flex-col md:flex-row h-[600px]">
+                    <!-- Left Section: Options, Logs & Controls -->
+                    <div class="w-full md:w-1/3 bg-[#111214] border-r border-[#2b2d31] flex flex-col p-4 space-y-4">
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">시뮬레이터 제어 센터</h4>
+                            <div class="flex flex-col gap-1.5 text-xs">
+                                <label class="text-slate-400 mb-1">가상 AI 모델 변경:</label>
+                                <select id="simModel" class="bg-discord-gray text-white p-2 rounded border border-[#2b2d31] focus:outline-none mb-3">
+                                    <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite (속도 우수)</option>
+                                    <option value="gemini-2.5-pro">gemini-2.5-pro (정밀 코딩)</option>
+                                </select>
+
+                                <label class="text-slate-400 mb-1">사용자 가상 상태:</label>
+                                <div class="flex gap-2 mb-3">
+                                    <button onclick="setSimUserState('normal')" id="btn-user-normal" class="flex-1 py-1 px-2 bg-discord-green text-white rounded font-bold">정상 유저</button>
+                                    <button onclick="setSimUserState('banned')" id="btn-user-banned" class="flex-1 py-1 px-2 bg-[#2b2d31] text-slate-300 rounded hover:bg-discord-red/10 hover:text-discord-red border border-transparent transition-all">정지 유저</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">자주 묻는 질문 템플릿</h4>
+                            <div class="flex flex-col gap-1">
+                                <button onclick="simulateQuery('오늘 멜론 최신 노래 순위 차트 보여줘')" class="w-full text-left px-2.5 py-1.5 bg-discord-light hover:bg-[#3f4248] text-[11px] rounded text-slate-200 truncate transition-colors flex items-center space-x-1">
+                                    <i data-lucide="music" class="w-3.5 h-3.5 text-discord-green"></i>
+                                    <span>멜론 차트 & 가요 추천</span>
+                                </button>
+                                <button onclick="simulateQuery('삼성 갤럭시랑 핵심 정보 검색해줘')" class="w-full text-left px-2.5 py-1.5 bg-discord-light hover:bg-[#3f4248] text-[11px] rounded text-slate-200 truncate transition-colors flex items-center space-x-1">
+                                    <i data-lucide="search" class="w-3.5 h-3.5 text-discord-blue"></i>
+                                    <span>삼성 갤럭시 소식 교차 검색</span>
+                                </button>
+                                <button onclick="simulateQuery('개인정보처리방침이랑 디테 이용안내 노션 링크좀')" class="w-full text-left px-2.5 py-1.5 bg-discord-light hover:bg-[#3f4248] text-[11px] rounded text-slate-200 truncate transition-colors flex items-center space-x-1">
+                                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-discord-yellow"></i>
+                                    <span>개인정보 & 공식 규칙 핫링크</span>
+                                </button>
+                                <button onclick="simulateQuery('@everyone 야 이것좀 봐봐 도배한다')" class="w-full text-left px-2.5 py-1.5 bg-discord-light hover:bg-discord-red/15 hover:text-discord-red text-[11px] rounded text-slate-300 truncate transition-colors flex items-center space-x-1">
+                                    <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+                                    <span>금지 멘션 도배 (보안 위반 테스트)</span>
+                                </button>
+                                <button onclick="triggerResetMemory()" class="w-full text-left px-2.5 py-1.5 bg-discord-red/10 hover:bg-discord-red/20 text-[11px] rounded text-discord-red truncate font-semibold transition-colors flex items-center space-x-1">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                    <span>/기억초기화 (대화 세션 포맷)</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Backend Dynamic Logging Simulator -->
+                        <div class="flex-1 flex flex-col min-h-0">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">실시간 파이프라인 로그</h4>
+                            <div id="backendLogs" class="flex-1 bg-[#1e1f22] rounded p-2.5 font-mono text-[10px] text-[#23a55a] overflow-y-auto space-y-1 border border-[#2b2d31]">
+                                <p class="text-slate-500">// 대화 전송 시 디테의 실시간 데이터 파이핑 처리가 여기에 디버깅됩니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Section: Discord UI Mockup -->
+                    <div class="flex-1 flex flex-col bg-[#313338] relative">
+                        <!-- Channel Header -->
+                        <div class="px-4 py-3 bg-discord-gray border-b border-[#2b2d31] flex items-center justify-between shrink-0">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-8 h-8 rounded-full bg-discord-blue flex items-center justify-center text-white">
+                                    <i data-lucide="bot" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-white flex items-center gap-1">
+                                        디테 <span class="bg-[#2b2d31] text-[10px] text-slate-400 px-1 py-0.5 rounded">봇</span>
+                                    </h4>
+                                    <p class="text-[10px] text-slate-400 flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-discord-green"></span> 현재 채널 작동 허용됨
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Messages Stream Area -->
+                        <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 text-xs md:text-sm">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 rounded-full bg-discord-blue shrink-0 flex items-center justify-center text-white">
+                                    <i data-lucide="bot" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-baseline space-x-2">
+                                        <span class="font-bold text-white">디테</span>
+                                        <span class="text-[10px] text-slate-400">오후 11:45</span>
+                                    </div>
+                                    <p class="text-slate-200 mt-1">안녕! 🌟 나는 실시간 검색 정보와 최신 가요 멜론 차트 파싱 엔진이 결합된 상냥한 AI 비서 **디테**야! 나랑 같이 깊이 있는 대화를 시작해 볼래? 어떤 것이든 친절하게 알려줄게! 😊</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thinking Spinner -->
+                        <div id="typingStatus" class="hidden px-4 py-1.5 bg-[#2b2d31]/50 text-[10px] text-slate-400 italic shrink-0">
+                            디테가 생각을 작성하며 문장을 구성하는 중... ✍️
+                        </div>
+
+                        <!-- Message Input Form -->
+                        <div class="p-4 bg-[#313338] shrink-0">
+                            <form onsubmit="handleChatSubmit(event)" class="relative flex items-center">
+                                <input type="text" id="chatInput" placeholder="디테봇에게 물어볼 질문을 입력하세요..." class="w-full px-4 py-2.5 bg-[#383a40] text-xs rounded-lg border border-transparent focus:outline-none focus:border-discord-blue text-white">
+                                <button type="submit" class="absolute right-3 text-slate-400 hover:text-white transition-colors">
+                                    <i data-lucide="send" class="w-4.5 h-4.5"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-discord-dark py-6 border-t border-[#2b2d31] text-center text-xs text-slate-500 space-y-1">
+        <p>© 2026 디테봇 개발 위원회 (Dite Bot Development Team). All Rights Reserved.</p>
+        <p>Powered by <span class="text-discord-blue font-bold">Gemini-3.1-Flash-Lite</span> and discord.py v2.4.0</p>
+        <p class="text-[10px] text-slate-600 mt-1">Official Host: <a href="https://dite.p-e.kr" class="hover:underline text-slate-500">dite.p-e.kr</a> | Docs: <a href="https://dite.bot/wiki" class="hover:underline text-slate-500">dite.bot/wiki</a></p>
+    </footer>
+
+    <!-- JavaScript Processing Engine -->
+    <script>
+        // Database Schema Registry
+        const dbSchema = {
+            config: {
+                desc: "디테봇 통합 작동 설정을 기입하는 중앙 제어 환경 변수 테이블입니다.",
+                fields: [
+                    { name: "key", type: "TEXT", constraint: "PRIMARY KEY", desc: "설정 키 이름 (예: allowed_channels, active_model)" },
+                    { name: "value", type: "TEXT", constraint: "NOT NULL", desc: "직렬화된 JSON 또는 문자열 설정값" }
+                ],
+                sample: [
+                    { key: "allowed_channels", value: '["1214002930219483204", "1193859239483920938"]' },
+                    { key: "active_model", value: "gemini-3.1-flash-lite" },
+                    { key: "developer_ids", value: '["718293920194859011"]' }
+                ]
+            },
+            api_keys: {
+                desc: "다중 호출 키 로테이션을 위한 Gemini API 키 풀 테이블입니다.",
+                fields: [
+                    { name: "name", type: "TEXT", constraint: "PRIMARY KEY", desc: "사용자 기입 식별 이름 (예: 메인키, 비상용보조키)" },
+                    { name: "key_value", type: "TEXT", constraint: "NOT NULL", desc: "실제 발급받은 AI API 키 값" }
+                ],
+                sample: [
+                    { name: "Main_Key", key_value: "AIzaSyAs782-YuxaB_..." },
+                    { name: "Backup_Key_1", key_value: "AIzaSyCd910-ZpqaC_..." }
+                ]
+            },
+            user_active_memories: {
+                desc: "봇이 재시작되어도 끊어지지 않고 문맥을 이해할 수 있게 영구 동기화하는 사용자별 대화 메모리입니다.",
+                fields: [
+                    { name: "user_id", type: "TEXT", constraint: "PRIMARY KEY", desc: "디스코드 사용자 고유 식별자 ID" },
+                    { name: "memory_json", type: "TEXT", constraint: "NOT NULL", desc: "역사 맥락 보정용 JSON 구조화 대화 (최대 50건 보관)" }
+                ],
+                sample: [
+                    { 
+                        user_id: "492019382940294011", 
+                        memory_json: '[\n  {"role": "user", "content": "안녕 디테야?"},\n  {"role": "model", "content": "안녕하세요! 어떤 유익한 이야기를 나눠볼까요? 😊"}\n]'
+                    }
+                ]
+            },
+            deleted_memories: {
+                desc: "기억초기화 시행 시 실제 AI 참조망에선 영구 배제하되, 로그 분석을 위해 비파괴 격리 이전시킨 보존소입니다.",
+                fields: [
+                    { name: "id", type: "INTEGER", constraint: "PRIMARY KEY AUTOINCREMENT", desc: "일련 번호 고유값" },
+                    { name: "user_id", type: "TEXT", constraint: "NOT NULL", desc: "지운 대상 유저 고유 ID" },
+                    { name: "role", type: "TEXT", constraint: "NOT NULL", desc: "발화자 분류 (user / model)" },
+                    { name: "content", type: "TEXT", constraint: "NOT NULL", desc: "지워진 대화 내용 원본" },
+                    { name: "deleted_by", type: "TEXT", constraint: "NOT NULL", desc: "삭제 사유 코드 (USER_SELF_RESET, ADMIN_id 등)" },
+                    { name: "timestamp", type: "TEXT", constraint: "NOT NULL", desc: "격리실 안전 이식 시점" }
+                ],
+                sample: [
+                    {
+                        id: 1,
+                        user_id: "492019382940294011",
+                        role: "user",
+                        content: "개인적인 질문을 가득 적었었어요.",
+                        deleted_by: "USER_SELF_RESET: 492019382940294011",
+                        timestamp: "2026-07-13 18:24:01"
+                    }
+                ]
+            },
+            banned_users: {
+                desc: "디테 서비스 이용 약관을 준수하지 않고 악의적 상호작용을 취해 격리 처분된 정지 사용자들의 고유 리스트입니다.",
+                fields: [
+                    { name: "user_id", type: "TEXT", constraint: "PRIMARY KEY", desc: "이용 정지 조치 대상 유저 ID" },
+                    { name: "ban_reason", type: "TEXT", constraint: "NOT NULL", desc: "위반 사유 설명 기입" },
+                    { name: "ban_until", type: "TEXT", constraint: "NOT NULL", desc: "정지 만료일자 (KST 기준 문자열 또는 '영구')" },
+                    { name: "banned_at", type: "TEXT", constraint: "NOT NULL", desc: "최초 제재 조치 시행 시간" }
+                ],
+                sample: [
+                    {
+                        user_id: "819203910293021948",
+                        ban_reason: "@everyone 태그를 활용한 도배 및 유해한 폭력 언사 지속 사용",
+                        ban_until: "2026-07-20 23:59:59",
+                        banned_at: "2026-07-13 21:00:00"
+                    },
+                    {
+                        user_id: "920193021948291039",
+                        ban_reason: "비정상적 API 과호출 트리거 악용 수집 유도",
+                        ban_until: "영구",
+                        banned_at: "2026-07-10 12:00:00"
+                    }
+                ]
+            }
+        };
+
+        let activeSimUserState = 'normal'; // 'normal' or 'banned'
+
+        // On Load Initializations
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            switchTab('tab-api');
+            exploreTable('config');
+        });
+
+        // Tab Swapping Controller
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+
+            // Button Highlight update
+            const tabButtons = ['tab-api', 'tab-search', 'tab-memory', 'tab-cleanup'];
+            tabButtons.forEach(btn => {
+                const btnEl = document.getElementById(`btn-${btn}`);
+                if (btn === tabId) {
+                    btnEl.classList.add('border-discord-blue', 'text-white');
+                    btnEl.classList.remove('border-transparent', 'text-slate-400');
+                } else {
+                    btnEl.classList.remove('border-discord-blue', 'text-white');
+                    btnEl.classList.add('border-transparent', 'text-slate-400');
+                }
+            });
+        }
+
+        // Table Explorer Injector
+        function exploreTable(tableName) {
+            const schema = dbSchema[tableName];
+            if (!schema) return;
+
+            // Highlight Tab Button
+            const tableNames = ['config', 'api_keys', 'user_active_memories', 'deleted_memories', 'banned_users'];
+            tableNames.forEach(t => {
+                const btn = document.getElementById(`btn-db-${t}`);
+                if (t === tableName) {
+                    btn.classList.add('bg-discord-light', 'border-discord-blue');
+                } else {
+                    btn.classList.remove('bg-discord-light', 'border-discord-blue');
+                }
+            });
+
+            // Update Name, description
+            document.getElementById('explorerTableName').innerHTML = `<i data-lucide="database" class="w-4 h-4 text-discord-blue"></i> bot_data.db ➔ ${tableName}`;
+            document.getElementById('explorerTableDesc').innerText = schema.desc;
+
+            // Build schema rows
+            const tbody = document.getElementById('explorerSchemaBody');
+            tbody.innerHTML = "";
+            schema.fields.forEach(field => {
+                const row = `
+                    <tr class="hover:bg-discord-light/30 transition-colors">
+                        <td class="py-2.5 px-3 text-white font-bold">${field.name}</td>
+                        <td class="py-2.5 px-3 text-discord-yellow">${field.type}</td>
+                        <td class="py-2.5 px-3 text-purple-400 font-semibold">${field.constraint || "NULL 가능"}</td>
+                        <td class="py-2.5 px-3 text-slate-300">${field.desc}</td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+
+            // Inject Sample Data json
+            document.getElementById('explorerSampleData').textContent = JSON.stringify(schema.sample, null, 2);
+            lucide.createIcons();
+        }
+
+        // Copy Domain clipboard helper
+        function copyDomain() {
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = "https://dite.bot/wiki";
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            
+            showToast("공식 위키 주소(dite.bot/wiki)가 복사되었습니다!");
+        }
+
+        // Copy text code block
+        function copyCode(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+
+            showToast("명령어가 성공적으로 클립보드에 기록되었습니다.");
+        }
+
+        // Show Toast Notifications
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Filter Sidebar Items
+        function filterWiki() {
+            const query = document.getElementById('wikiSearch').value.toLowerCase();
+            const groups = document.querySelectorAll('#sidebarNav div');
+
+            groups.forEach(group => {
+                const links = group.querySelectorAll('a');
+                let hasVisible = false;
+
+                links.forEach(link => {
+                    const text = link.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        link.style.display = 'flex';
+                        hasVisible = true;
+                    } else {
+                        link.style.display = 'none';
+                    }
+                });
+
+                if (hasVisible || query === "") {
+                    group.style.display = 'block';
+                } else {
+                    group.style.display = 'none';
+                }
+            });
+        }
+
+        // State Setter for Simulator User
+        function setSimUserState(state) {
+            activeSimUserState = state;
+            const btnNormal = document.getElementById('btn-user-normal');
+            const btnBanned = document.getElementById('btn-user-banned');
+
+            if (state === 'normal') {
+                btnNormal.className = "flex-1 py-1 px-2 bg-discord-green text-white rounded font-bold text-xs";
+                btnBanned.className = "flex-1 py-1 px-2 bg-[#2b2d31] text-slate-300 rounded hover:bg-discord-red/10 hover:text-discord-red border border-transparent transition-all text-xs";
+                addLog("가상 사용자 상태 변경: '일반(활동 가능)'");
+            } else {
+                btnNormal.className = "flex-1 py-1 px-2 bg-[#2b2d31] text-slate-300 rounded hover:bg-discord-green/10 hover:text-discord-green border border-transparent transition-all text-xs";
+                btnBanned.className = "flex-1 py-1 px-2 bg-discord-red text-white rounded font-bold text-xs";
+                addLog("가상 사용자 상태 변경: '이용 정지 상태(제재 등록됨)'", "warn");
+            }
+        }
+
+        // ==========================================
+        // 💬 Sandbox Interaction & Log Emulation Engine
+        // ==========================================
+        function addLog(text, type = "info") {
+            const logs = document.getElementById('backendLogs');
+            const p = document.createElement('p');
+            const now = new Date();
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            if (type === "warn") {
+                p.className = "text-discord-yellow";
+                p.textContent = `[${time}] ⚠️ ${text}`;
+            } else if (type === "error") {
+                p.className = "text-discord-red";
+                p.textContent = `[${time}] ❌ ${text}`;
+            } else {
+                p.className = "text-discord-green";
+                p.textContent = `[${time}] ⚙️ ${text}`;
+            }
+            logs.appendChild(p);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function simulateQuery(query) {
+            document.getElementById('chatInput').value = query;
+            handleChatSubmit(new Event('submit'));
+        }
+
+        function triggerResetMemory() {
+            addLog("사용자가 /기억초기화 신호를 입력했습니다.");
+            
+            if (activeSimUserState === 'banned') {
+                addLog("차단 가드 차단 통과 거부: 정지 유저의 명령어는 처리하지 않습니다.", "error");
+                showBannedMessage();
+                return;
+            }
+
+            addLog("user_active_memories 내역 로딩 중...");
+            addLog("비파괴 보존 필터 작동: deleted_memories 테이블로 이력 백업 시작", "info");
+            
+            const chatMessages = document.getElementById('chatMessages');
+            const resetNotification = `
+                <div class="flex justify-center my-3">
+                    <span class="bg-discord-red/25 text-discord-red border border-discord-red/30 px-3 py-1.5 rounded-md text-[10px] font-mono flex items-center gap-1.5 shadow-sm">
+                        <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> user_active_memories 초기화 완료 및 격리 백업 저장소 이관 성공
+                    </span>
+                </div>
+            `;
+            chatMessages.insertAdjacentHTML('beforeend', resetNotification);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            setTimeout(() => {
+                const response = `
+                    <div class="flex items-start space-x-3 animate-fade-in">
+                        <div class="w-8 h-8 rounded-full bg-discord-blue shrink-0 flex items-center justify-center text-white">
+                            <i data-lucide="bot" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="font-bold text-white">디테</span>
+                                <span class="bg-discord-blue text-[9px] text-white px-1 py-0.5 rounded">봇</span>
+                                <span class="text-[10px] text-slate-400">방금 전</span>
+                            </div>
+                            <p class="text-slate-200 mt-1 leading-relaxed">✨ **나랑 있었던 소중한 옛날 기억들을 이쁘게 상자에 담아서 창고 데이터베이스에 안전하게 보관해 두었어!** 이제 내 머릿속은 맑고 깨끗하게 비어있는 상태야! 다시 상냥하게 대화의 첫 단추를 채워나갈까? 언제든 네 말을 들을 준비가 되어 있어! 😉🎵</p>
+                        </div>
+                    </div>
+                `;
+                chatMessages.insertAdjacentHTML('beforeend', response);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                lucide.createIcons();
+            }, 1000);
+        }
+
+        function showBannedMessage() {
+            const chatMessages = document.getElementById('chatMessages');
+            const bannedMsgHtml = `
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-discord-red shrink-0 flex items-center justify-center text-white">
+                        <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-baseline space-x-2">
+                            <span class="font-bold text-discord-red">디테 보안가드</span>
+                            <span class="bg-discord-red text-[9px] text-white px-1 py-0.5 rounded">제재</span>
+                            <span class="text-[10px] text-slate-400">방금 전</span>
+                        </div>
+                        <p class="text-discord-red font-semibold mt-1">🚨 **사용 제한 알림**: 현재 디테봇 사용 수칙 및 이용 가이드를 성실히 준수하지 않아 서비스 이용이 정지된 사용자이므로 상호작용 명령을 완벽 거부 차단합니다.\n- 정지 사유: \`@everyone 태그 지속 오용 및 커뮤니티 도배 행위\`\n- 정지 기한: \`영구 정지\``</p>
+                    </div>
+                </div>
+            `;
+            chatMessages.insertAdjacentHTML('beforeend', bannedMsgHtml);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            lucide.createIcons();
+        }
+
+        function handleChatSubmit(event) {
+            if (event) event.preventDefault();
+            const inputEl = document.getElementById('chatInput');
+            const query = inputEl.value.trim();
+            if (!query) return;
+
+            inputEl.value = "";
+
+            // User Message render
+            const chatMessages = document.getElementById('chatMessages');
+            const userHtml = `
+                <div class="flex items-start space-x-3 justify-end text-right">
+                    <div class="order-1">
+                        <div class="flex items-baseline space-x-2 justify-end">
+                            <span class="font-bold text-white">사용자 (나)</span>
+                            <span class="text-[10px] text-slate-400">방금 전</span>
+                        </div>
+                        <p class="bg-discord-blue/10 border border-discord-blue/20 text-slate-200 rounded-lg p-2.5 mt-1 inline-block max-w-lg text-left leading-relaxed">${query}</p>
+                    </div>
+                </div>
+            `;
+            chatMessages.insertAdjacentHTML('beforeend', userHtml);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            addLog(`사용자 입력 패킷 접수: "${query}"`);
+
+            // Security check 1: Ban status check
+            if (activeSimUserState === 'banned') {
+                addLog("보안 필터: 정지 유저로 식별되어 Gemini API 파이프라인 전송을 완벽히 차단 격리합니다.", "error");
+                setTimeout(() => {
+                    showBannedMessage();
+                }, 800);
+                return;
+            }
+
+            // Security check 2: Forbidden mentions
+            const restrictPatterns = ["@everyone", "@here", "<@&", "<@!"];
+            const isForbidden = restrictPatterns.some(p => query.toLowerCase().includes(p));
+            if (isForbidden) {
+                addLog("도배 및 멘션 차단 필터 경보 발동: 악성 태그 감지!", "error");
+                setTimeout(() => {
+                    const blockMsgHtml = `
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-discord-yellow shrink-0 flex items-center justify-center text-white">
+                                <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-baseline space-x-2">
+                                    <span class="font-bold text-[#f0b232]">디테 보안관</span>
+                                    <span class="bg-[#f0b232] text-[9px] text-white px-1 py-0.5 rounded">보안경고</span>
+                                    <span class="text-[10px] text-slate-400">방금 전</span>
+                                </div>
+                                <p class="text-slate-200 mt-1 leading-relaxed">⚠️ **보안 경고**: 다른 서버 유저를 강제로 태그하여 부르거나 전체 역할 언급을 유도하는 유해 멘션(\`@everyone\`, \`@here\`)이 포함된 질문에는 응답하지 않아! 다른 사람들에게 해가 되는 행동은 자제하고 건전하고 재미있는 주제로만 질문을 남겨줘! 😊</p>
+                            </div>
+                        </div>
+                    `;
+                    chatMessages.insertAdjacentHTML('beforeend', blockMsgHtml);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    lucide.createIcons();
+                }, 800);
+                return;
+            }
+
+            // Determine if query is music/melon, samsung or general
+            const isMusic = ["멜론", "노래", "가요", "차트", "음악"].some(t => query.includes(t));
+            const isSamsung = ["삼성", "갤럭시", "반도체"].some(t => query.includes(t));
+            const isPolicy = ["규칙", "개인정보", "약관", "이용안내", "방침"].some(t => query.includes(t));
+
+            document.getElementById('typingStatus').classList.remove('hidden');
+
+            let thinkProcess = "";
+            let generatedOutput = "";
+            let searchLogs = [];
+
+            // Pipeline process flow simulation
+            setTimeout(() => {
+                addLog("지능형 다중 키워드 추출 파서 가동...");
+                if (isMusic) {
+                    searchLogs = [
+                        "키워드 추출: ['멜론 가요 차트', '최신 음악 순위']",
+                        "병렬 비동기 조회: DuckDuckGo Lite GET 호출 성공 (status: 200)",
+                        "파싱 성공: 실시간 멜론 Top 5 차트 데이터 및 User-Agent 우회 정상화 완료"
+                    ];
+                    thinkProcess = "사용자가 최신 음악 순위 및 멜론 차트를 물어봤어. static parser가 가져온 실시간 상위 20곡 중 5곡을 포맷하고, 미성년자 권고 기준에 어울리게 힙하고 건전하며 발랄한 음원 위주로 추천해 줘야겠어. 출처는 각주 번호 마스킹 [[1]] 처리를 진행한다.";
+                    generatedOutput = `실시간 대중가요 멜론 차트 음악 트렌드 목록을 기쁘게 배달할게! 🎵🎧
+
+지금 가요 시장을 가장 뜨겁게 흔들고 있는 음악 상위 5곡의 가사 감상 추천 포인트야! [[1] 멜론 공식 차트](https://www.melon.com/chart/index.htm)
+
+1. **aespa - Supernova** 🌟 (듣기만 해도 어깨가 춤추는 신나고 에너제틱한 팝스타일 가요야!)
+2. **NewJeans - How Sweet** 🍬 (상큼하고 힙한 뉴진스만의 감성이 듬뿍 느껴지는 매력만점 가요!)
+3. **QWER - 고민중독** 🎸 (소녀들의 활기찬 밴드 세션 사운드가 온종일 흥을 돋우는 청량 가요!)
+4. **이클립스 - 소나기** ☔ (서정적인 가사와 맑은 빗소리가 생각나는 잔잔하고 따뜻한 멜로디의 발라드!)
+5. **NewJeans - Bubble Gum** 🫧 (풍선껌처럼 톡톡 튀는 발랄하고 청순한 멜로디의 힐링 보컬!)
+
+이 중에 네 마음을 쏙 사로잡은 가요를 골라 오늘 하루의 플레이리스트를 기분 좋게 꽉 채워봐! 다른 트렌드나 장르 가요 정보도 필요하면 말해줘! 😉💖`;
+                } else if (isSamsung) {
+                    searchLogs = [
+                        "키워드 추출: ['삼성전자 갤럭시 근황', '삼성전자 주력 반도체']",
+                        "병렬 비동기 조회: DuckDuckGo Lite GET 호출 성공 (status: 200)",
+                        "캐시 정보 연계: 캐시 주소 매핑 성공 ➔ 삼성전자 공식 사이트"
+                    ];
+                    thinkProcess = "삼성전자에 대해 실시간 검색 내용이 연계되었어. 초우량 기업으로서의 가치와 함께 최근 트렌드인 스마트 기술 및 갤럭시 라인업을 상냥한 말투로 설명해야겠어.";
+                    generatedOutput = `삼성전자에 대한 상세 정보와 갤럭시 관련 위키 내용을 수집해서 알려줄게! 💻🌐
+
+삼성전자는 한국을 대표하는 최고 규모의 글로벌 기술 기업이자, 모바일과 반도체 가전 사업 분야를 넓게 이끌어가고 있어. [[1] 삼성전자 공식 사이트](https://www.samsung.com/sec/)
+
+- **갤럭시 스마트 디바이스:** 최근 온디바이스 기술이 접목되어 인기를 누리는 스마트 갤럭시 기기들이 큰 관심과 사랑을 한몸에 받고 있어! [[2] 나무위키](https://namu.wiki/w/%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90)
+- **메모리 기술:** 고성능 데이터 처리를 선도하며 압도적인 성능의 부품 설계 능력을 보장하고 있지.
+
+더 궁금한 하드웨어 부품 스펙이나 정보가 있다면 언제든 친절하게 알려줄 테니 편하게 이야기해 줘! ✨🚀`;
+                } else if (isPolicy) {
+                    searchLogs = [
+                        "키워드 추출: ['디테봇 개인정보처리방침', '디테봇 공식 노션 규칙']",
+                        "병렬 비동기 조회: DDG Lite GET 호출 우회 성공 (status: 200)",
+                        "정교 매칭: 디테봇 노션 규칙 핫링크 직접 연계"
+                    ];
+                    thinkProcess = "유저가 디테봇의 가이드와 이용약관 등을 질문했어. 시스템 지침 규칙 4번에 따라 공식 노션 링크 `https://app.notion.com/p/39c6106f2b278011a4f6c50b5a854ecd`를 꼭 동봉하여 다정하고 차분하게 정책을 알리고 정직한 이용을 장려하자.";
+                    generatedOutput = `디테봇을 모두와 조화롭고 안전하게 사용하기 위한 소중한 약속들을 정리해 줄게! 🛡️📖
+
+디테봇은 소중한 친구들의 개인 정보와 쾌적한 봇 이용 분위기를 유지하기 위해 아래와 같이 **공식 수칙 및 처리 방침**을 투명하게 운용하고 있어!
+
+안전한 사용 안내와 상세 규정을 언제든 확인해 보려면 아래 공식 문서를 열어봐줘! 👇
+🔗 [[공식 링크] 디테봇 개인정보처리방침/이용안내/규칙](https://app.notion.com/p/39c6106f2b278011a4f6c50b5a854ecd)
+
+- **커뮤니티 수칙 가이드:** 도배 공격, 불법 유도 멘션, 비정상적 가동을 유발하는 파기 행동 시 데이터베이스 \`banned_users\` 제재 처리를 취할 수 있어.
+- **기억 보존 동기화:** 대화 기억 세션(\`user_active_memories\`)은 더 자연스러운 맥락을 인지하고 이어나가기 위한 기술 목적으로만 안전하게 직렬화해 보존하니 기밀 유출은 걱정 안 해도 돼!`;
+                } else {
+                    searchLogs = [
+                        "일반 발화 패턴: 문맥 기억 대입 진행",
+                        "DB 스캔: user_active_memories 조회 완료 (이전 대화가 없는 단발성 문맥)"
+                    ];
+                    thinkProcess = "특정 검색어가 없는 정감 어린 대화이다. 디테의 특유의 이모지와 상냥함을 주입하여 닉네임을 불러주고 영속 기억의 대단함을 귀엽게 설파하며 안부를 묻는다.";
+                    generatedOutput = `응! 네가 보낸 이야기를 아주 흥미롭고 다정하게 듣고 있어! 😊✨
+
+지금 나와 나누고 있는 대화 추억들은 하나도 빠짐없이 데이터베이스 \`user_active_memories\` 테이블에 영구 저장되고 있는 중이야! 그래서 나중에 봇이 재시작되더라도 나는 네가 말한 것들을 잊지 않고 상냥하게 기억해 내 대화할 수 있어! 🧠💬
+
+평소에 궁금했거나 마음에 담아두었던 따뜻한 주제들이 있다면 다 얘기해 줘! 디테봇은 언제나 네 이야기를 들을 준비가 되어 있단다! 😉🌟`;
+                }
+
+                // Append logs sequentially
+                searchLogs.forEach((logText, i) => {
+                    setTimeout(() => {
+                        addLog(logText);
+                    }, i * 200);
+                });
+
+                // Generate and render stream
+                setTimeout(() => {
+                    const activeModel = document.getElementById('simModel').value;
+                    const resTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const msgId = 'msg-' + Math.random().toString(36).substr(2, 9);
+
+                    // Post citation processing emulator
+                    let finalText = generatedOutput;
+                    let footer = "\n\n────────────────────────\n";
+                    if (isMusic) {
+                        finalText = finalText.replace(/\[\[1\] 멜론 공식 차트\]\(https:\/\/www.melon.com\/chart\/index.htm\)/g, "[[1] 멜론 공식 차트](<https://www.melon.com/chart/index.htm>)");
+                        footer += "[[1] 멜론 공식 차트](<https://www.melon.com/chart/index.htm>)\n";
+                        finalText += footer;
+                    } else if (isSamsung) {
+                        finalText = finalText.replace(/\[\[1\] 삼성전자 공식 사이트\]\(https:\/\/www.samsung.com\/sec\/\)/g, "[[1] 삼성전자 공식 사이트](<https://www.samsung.com/sec/>)");
+                        finalText = finalText.replace(/\[\[2\] 나무위키\]\(https:\/\/namu.wiki\/w\/%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90\)/g, "[[2] 나무위키](<https://namu.wiki/w/%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90>)");
+                        footer += "[[1] 삼성전자 공식 사이트](<https://www.samsung.com/sec/>)\n[[2] 나무위키](<https://namu.wiki/w/%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90>)\n";
+                        finalText += footer;
+                    } else if (isPolicy) {
+                        finalText = finalText.replace(/\[\[공식 링크\] 디테봇 개인정보처리방침\/이용안내\/규칙\]\(https:\/\/app.notion.com\/p\/39c6106f2b278011a4f6c50b5a854ecd\)/g, "[[1] 디테봇 개인정보처리방침/이용안내/규칙](<https://app.notion.com/p/39c6106f2b278011a4f6c50b5a854ecd>)");
+                        footer += "[[1] 디테봇 개인정보처리방침/이용안내/규칙](<https://app.notion.com/p/39c6106f2b278011a4f6c50b5a854ecd>)\n";
+                        finalText += footer;
+                    }
+
+                    const responseHtml = `
+                        <div class="flex items-start space-x-3" id="${msgId}">
+                            <div class="w-8 h-8 rounded-full bg-discord-blue shrink-0 flex items-center justify-center text-white">
+                                <i data-lucide="bot" class="w-5 h-5"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-baseline space-x-2">
+                                    <span class="font-bold text-white">디테</span>
+                                    <span class="bg-discord-blue text-[9px] text-white px-1 py-0.5 rounded">봇</span>
+                                    <span class="text-[10px] text-slate-400">${resTime}</span>
+                                </div>
+                                <div class="text-[10px] text-slate-500 font-mono mt-0.5">사용 모델: ${activeModel}</div>
+
+                                <!-- Emulated thinking process box -->
+                                <div class="mt-2 bg-discord-dark p-2.5 rounded text-[11px] text-slate-400 font-mono border border-[#2b2d31]">
+                                    <p class="text-[10px] text-discord-blue uppercase font-bold not-italic tracking-wider mb-1">🧠 실시간 AI 추론 가공 분석 (&lt;think&gt;):</p>
+                                    ${thinkProcess}
+                                </div>
+
+                                <p class="text-slate-200 mt-2 whitespace-pre-line leading-relaxed">${finalText}</p>
+                            </div>
+                        </div>
+                    `;
+
+                    document.getElementById('typingStatus').classList.add('hidden');
+                    chatMessages.insertAdjacentHTML('beforeend', responseHtml);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    lucide.createIcons();
+
+                    addLog("Gemini API 스트리밍 응답 융합 파이프라인 정산 통과");
+                    addLog("기록 상태 동기화: user_active_memories 테이블에 성공적으로 갱신 적용되었습니다.");
+
+                }, searchLogs.length * 200 + 400);
+
+            }, 800);
+        }
+    </script>
+
+</body>
+</html>
