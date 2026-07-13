@@ -30,6 +30,10 @@
                             red: '#f23f43',
                             sidebar: '#2b2d31'
                         }
+                    },
+                    boxShadow: {
+                        neonBlue: '0 0 15px rgba(88, 101, 242, 0.4)',
+                        neonGreen: '0 0 15px rgba(35, 165, 90, 0.4)'
                     }
                 }
             }
@@ -57,44 +61,47 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #35363c;
         }
-        .tab-active {
-            border-bottom-color: #5865f2;
-            color: #ffffff;
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
     <!-- Top Navigation Header -->
-    <header class="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-discord-dark border-b border-[#2b2d31]">
+    <header class="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-discord-dark border-b border-[#2b2d31] backdrop-blur-md bg-opacity-95">
         <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-full bg-discord-blue flex items-center justify-center shadow-lg transform hover:rotate-12 transition-transform">
-                <i data-lucide="bot" class="text-white w-6 h-6"></i>
+            <div class="w-10 h-10 rounded-full bg-discord-blue flex items-center justify-center shadow-neonBlue transform hover:scale-110 hover:rotate-12 transition-all duration-300">
+                <i data-lucide="bot" class="text-white w-6 h-6 animate-pulse"></i>
             </div>
             <div>
-                <h1 class="text-base md:text-lg font-extrabold text-white flex items-center gap-2">
+                <h1 class="text-base md:text-lg font-black text-white flex items-center gap-2 tracking-tight">
                     Dite Bot <span class="bg-discord-blue text-[10px] text-white px-2 py-0.5 rounded-full font-bold">Tech Wiki v7.3</span>
                 </h1>
-                <p class="text-[11px] text-slate-400">지능형 다중 동기화 Discord 에이전트 상세 백서</p>
+                <p class="text-[11px] text-slate-400 font-medium">지능형 다중 동기화 Discord 에이전트 테크 백서</p>
             </div>
         </div>
 
-        <div class="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-300">
-            <a href="#intro" class="hover:text-white transition-colors">소개</a>
-            <a href="#architecture" class="hover:text-white transition-colors">시스템 설계</a>
-            <a href="#commands" class="hover:text-white transition-colors">명령어 레퍼런스</a>
-            <a href="#database" class="hover:text-white transition-colors">데이터베이스 탐색기</a>
-            <a href="#simulator" class="text-discord-blue font-semibold hover:underline flex items-center gap-1">
+        <div class="hidden lg:flex items-center space-x-6 text-sm font-semibold text-slate-300">
+            <a href="#intro" class="hover:text-white transition-colors duration-200">소개</a>
+            <a href="#architecture" class="hover:text-white transition-colors duration-200">시스템 설계</a>
+            <a href="#commands" class="hover:text-white transition-colors duration-200">명령어 레퍼런스</a>
+            <a href="#database" class="hover:text-white transition-colors duration-200">데이터베이스 탐색기</a>
+            <a href="#simulator" class="text-discord-blue font-bold hover:underline flex items-center gap-1.5 transition-all">
                 <i data-lucide="terminal" class="w-4 h-4"></i> 실시간 샌드박스
             </a>
         </div>
 
         <div class="flex items-center space-x-3">
-            <button onclick="copyDomain()" class="flex items-center space-x-1 px-3 py-1.5 bg-[#2b2d31] hover:bg-discord-light text-xs rounded text-slate-200 transition-all border border-[#3f4248]">
+            <button onclick="copyDomain()" class="flex items-center space-x-1.5 px-3 py-2 bg-[#2b2d31] hover:bg-discord-light text-xs font-bold rounded-lg text-slate-200 transition-all border border-[#3f4248]">
                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                 <span class="hidden sm:inline">도메인 복사</span>
             </button>
-            <a href="https://app.notion.com/p/39c6106f2b278011a4f6c50b5a854ecd" target="_blank" class="flex items-center space-x-1 px-3 py-1.5 bg-[#42444a] hover:bg-slate-600 text-xs text-white rounded transition-all">
+            <a href="https://app.notion.com/p/39c6106f2b278011a4f6c50b5a854ecd" target="_blank" class="flex items-center space-x-1.5 px-3 py-2 bg-discord-blue hover:bg-opacity-80 text-xs font-bold text-white rounded-lg transition-all shadow-neonBlue">
                 <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                 <span>공식 노션</span>
             </a>
@@ -112,19 +119,19 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                         <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
                     </span>
-                    <input type="text" id="wikiSearch" oninput="filterWiki()" placeholder="검색어를 입력하세요..." class="w-full pl-9 pr-4 py-2 bg-[#111214] text-xs rounded border border-[#2b2d31] focus:outline-none focus:border-discord-blue text-white">
+                    <input type="text" id="wikiSearch" oninput="filterWiki()" placeholder="검색어를 입력하세요..." class="w-full pl-9 pr-4 py-2 bg-[#111214] text-xs rounded-lg border border-[#2b2d31] focus:outline-none focus:border-discord-blue text-white transition-all">
                 </div>
 
                 <!-- Navigation Groups -->
                 <nav class="space-y-6 text-xs md:text-sm" id="sidebarNav">
                     <div>
-                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">시작하기</h3>
+                        <h3 class="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2">시작하기</h3>
                         <div class="space-y-1">
-                            <a href="#intro" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                            <a href="#intro" class="flex items-center space-x-2 px-2.5 py-2 rounded-lg text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
                                 <i data-lucide="book-open" class="w-4 h-4 text-discord-blue"></i>
                                 <span>디테봇 개요</span>
                             </a>
-                            <a href="#quickstart" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                            <a href="#quickstart" class="flex items-center space-x-2 px-2.5 py-2 rounded-lg text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
                                 <i data-lucide="play" class="w-4 h-4 text-discord-green"></i>
                                 <span>직접 배포 및 가동</span>
                             </a>
@@ -132,17 +139,17 @@
                     </div>
 
                     <div>
-                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">아키텍처 상세 정보</h3>
+                        <h3 class="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2">아키텍처 상세 정보</h3>
                         <div class="space-y-1">
-                            <a href="#architecture" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                            <a href="#architecture" class="flex items-center space-x-2 px-2.5 py-2 rounded-lg text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
                                 <i data-lucide="cpu" class="w-4 h-4 text-discord-yellow"></i>
                                 <span>AI 로테이션 및 품질 검증</span>
                             </a>
-                            <a href="#hybrid-search" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                            <a href="#hybrid-search" class="flex items-center space-x-2 px-2.5 py-2 rounded-lg text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
                                 <i data-lucide="zap" class="w-4 h-4 text-cyan-400"></i>
                                 <span>하이브리드 병렬 검색 흐름</span>
                             </a>
-                            <a href="#memory-sync" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                            <a href="#memory-sync" class="flex items-center space-x-2 px-2.5 py-2 rounded-lg text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
                                 <i data-lucide="history" class="w-4 h-4 text-purple-400"></i>
                                 <span>기억 동기화 & 영속 기전</span>
                             </a>
@@ -150,13 +157,13 @@
                     </div>
 
                     <div>
-                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">레퍼런스 & 스키마</h3>
+                        <h3 class="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2">레퍼런스 & 스키마</h3>
                         <div class="space-y-1">
-                            <a href="#commands" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                            <a href="#commands" class="flex items-center space-x-2 px-2.5 py-2 rounded-lg text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
                                 <i data-lucide="terminal" class="w-4 h-4 text-emerald-400"></i>
                                 <span>명령어 명세서</span>
                             </a>
-                            <a href="#database" class="flex items-center space-x-2 px-2 py-1.5 rounded text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
+                            <a href="#database" class="flex items-center space-x-2 px-2.5 py-2 rounded-lg text-slate-300 hover:bg-[#35363c] hover:text-white transition-all">
                                 <i data-lucide="database" class="w-4 h-4 text-[#f0b232]"></i>
                                 <span>데이터베이스 스크립트</span>
                             </a>
@@ -164,8 +171,8 @@
                     </div>
 
                     <div class="pt-4 border-t border-[#2b2d31]">
-                        <a href="#simulator" class="flex items-center space-x-2 px-3 py-2.5 bg-discord-blue/10 text-discord-blue hover:bg-discord-blue/20 rounded-md font-bold transition-all text-center justify-center">
-                            <i data-lucide="play-circle" class="w-4 h-4 animate-pulse"></i>
+                        <a href="#simulator" class="flex items-center space-x-2 px-3 py-3 bg-discord-blue/10 text-discord-blue hover:bg-discord-blue/20 rounded-lg font-extrabold transition-all text-center justify-center shadow-inner">
+                            <i data-lucide="play-circle" class="w-5 h-5 animate-pulse"></i>
                             <span>실시간 가상 시뮬레이터</span>
                         </a>
                     </div>
@@ -177,7 +184,7 @@
         <main class="flex-1 bg-discord-gray p-6 md:p-10 max-w-6xl overflow-y-auto space-y-16">
             
             <!-- Toast notification container -->
-            <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-[#23a55a] text-white px-4 py-3 rounded-lg shadow-2xl flex items-center space-x-2 animate-bounce">
+            <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-[#23a55a] text-white px-4 py-3 rounded-lg shadow-2xl flex items-center space-x-2 transition-all duration-300">
                 <i data-lucide="check-circle" class="w-5 h-5"></i>
                 <span id="toastMsg" class="text-xs font-semibold">성공적으로 처리되었습니다.</span>
             </div>
@@ -185,8 +192,8 @@
             <!-- Intro / Overview Section -->
             <section id="intro" class="scroll-mt-24 space-y-4">
                 <div class="flex items-center space-x-2 text-discord-blue">
-                    <i data-lucide="info" class="w-5 h-5 animate-bounce"></i>
-                    <span class="text-sm font-semibold tracking-wider uppercase">Overview</span>
+                    <i data-lucide="info" class="w-5 h-5"></i>
+                    <span class="text-sm font-bold tracking-wider uppercase">Overview</span>
                 </div>
                 <h2 class="text-3xl md:text-4xl font-black text-white tracking-tight">디테봇(Dite Bot) 개요</h2>
                 <p class="text-slate-300 leading-relaxed text-sm md:text-base">
@@ -194,33 +201,33 @@
                 </p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
-                    <div class="bg-[#2b2d31] p-4 rounded-lg border border-[#3f4248] flex flex-col justify-between">
-                        <div class="flex items-start space-x-2">
-                            <i data-lucide="key" class="w-5 h-5 text-discord-blue"></i>
-                            <h4 class="font-bold text-white text-xs">다중 API 로테이션</h4>
+                    <div class="bg-[#2b2d31] p-5 rounded-xl border border-[#3f4248] flex flex-col justify-between hover:border-discord-blue hover:shadow-neonBlue transition-all duration-300 group">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="key" class="w-5 h-5 text-discord-blue group-hover:scale-110 transition-transform"></i>
+                            <h4 class="font-black text-white text-sm">다중 API 로테이션</h4>
                         </div>
-                        <p class="text-[11px] text-slate-400 mt-2">API 키를 풀(Pool) 단위로 유지하고, 순차 로테이션을 가동하여 특정 키 만료 시 401 오류를 탐지해 실시간 격리합니다.</p>
+                        <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">API 키를 풀(Pool) 단위로 유지하고, 순차 로테이션을 가동하여 특정 키 만료 시 401 오류를 탐지해 실시간 격리합니다.</p>
                     </div>
-                    <div class="bg-[#2b2d31] p-4 rounded-lg border border-[#3f4248] flex flex-col justify-between">
-                        <div class="flex items-start space-x-2">
-                            <i data-lucide="search" class="w-5 h-5 text-discord-green"></i>
-                            <h4 class="font-bold text-white text-xs">하이브리드 병렬 검색</h4>
+                    <div class="bg-[#2b2d31] p-5 rounded-xl border border-[#3f4248] flex flex-col justify-between hover:border-discord-green hover:shadow-neonGreen transition-all duration-300 group">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="search" class="w-5 h-5 text-discord-green group-hover:scale-110 transition-transform"></i>
+                            <h4 class="font-black text-white text-sm">하이브리드 병렬 검색</h4>
                         </div>
-                        <p class="text-[11px] text-slate-400 mt-2">DuckDuckGo Lite GET 및 Wikipedia API를 비동기 병렬 조회하여 최적화된 출처 각주 마크다운 리포트를 자동 완성합니다.</p>
+                        <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">DuckDuckGo Lite GET 및 Wikipedia API를 비동기 병렬 조회하여 최적화된 출처 각주 마크다운 리포트를 자동 완성합니다.</p>
                     </div>
-                    <div class="bg-[#2b2d31] p-4 rounded-lg border border-[#3f4248] flex flex-col justify-between">
-                        <div class="flex items-start space-x-2">
-                            <i data-lucide="archive" class="w-5 h-5 text-discord-yellow"></i>
-                            <h4 class="font-bold text-white text-xs">비파괴 소프트 삭제</h4>
+                    <div class="bg-[#2b2d31] p-5 rounded-xl border border-[#3f4248] flex flex-col justify-between hover:border-discord-yellow hover:shadow-lg transition-all duration-300 group">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="archive" class="w-5 h-5 text-discord-yellow group-hover:scale-110 transition-transform"></i>
+                            <h4 class="font-black text-white text-sm">비파괴 소프트 삭제</h4>
                         </div>
-                        <p class="text-[11px] text-slate-400 mt-2">사용자나 관리자가 기억 초기화를 시행할 때, 실제 런타임 풀에서만 삭제하고 DB 아카이브 격리실에 영구 백업 보존합니다.</p>
+                        <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">사용자나 관리자가 기억 초기화를 시행할 때, 실제 런타임 풀에서만 삭제하고 DB 아카이브 격리실에 영구 백업 보존합니다.</p>
                     </div>
-                    <div class="bg-[#2b2d31] p-4 rounded-lg border border-[#3f4248] flex flex-col justify-between">
-                        <div class="flex items-start space-x-2">
-                            <i data-lucide="user-x" class="w-5 h-5 text-discord-red"></i>
-                            <h4 class="font-bold text-white text-xs">스마트 타임 정지 가드</h4>
+                    <div class="bg-[#2b2d31] p-5 rounded-xl border border-[#3f4248] flex flex-col justify-between hover:border-discord-red hover:shadow-lg transition-all duration-300 group">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="user-x" class="w-5 h-5 text-discord-red group-hover:scale-110 transition-transform"></i>
+                            <h4 class="font-black text-white text-sm">스마트 타임 정지 가드</h4>
                         </div>
-                        <p class="text-[11px] text-slate-400 mt-2">`30m`, `5h`, `7d` 등의 한글/영문 융합 정지 기한 포맷을 파싱하여 타겟 사용자 ID를 정교하게 차단 관리합니다.</p>
+                        <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">`30m`, `5h`, `7d` 등의 한글/영문 융합 정지 기한 포맷을 파싱하여 타겟 사용자 ID를 정교하게 차단 관리합니다.</p>
                     </div>
                 </div>
             </section>
@@ -229,31 +236,31 @@
             <section id="architecture" class="scroll-mt-24 space-y-6">
                 <div class="flex items-center space-x-2 text-discord-green">
                     <i data-lucide="cpu" class="w-5 h-5"></i>
-                    <span class="text-sm font-semibold tracking-wider uppercase">Core Architecture</span>
+                    <span class="text-sm font-bold tracking-wider uppercase">Core Architecture</span>
                 </div>
                 <h2 class="text-2xl md:text-3xl font-extrabold text-white">디테 아키텍처 상세 백서</h2>
                 
                 <!-- Tab Headers -->
                 <div class="flex border-b border-[#2b2d31] text-xs md:text-sm overflow-x-auto gap-2">
-                    <button onclick="switchTab('tab-api')" id="btn-tab-api" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-white transition-all font-semibold whitespace-nowrap">API 로테이션 & 격리</button>
-                    <button onclick="switchTab('tab-search')" id="btn-tab-search" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-white transition-all font-semibold whitespace-nowrap">하이브리드 정보 수집</button>
-                    <button onclick="switchTab('tab-memory')" id="btn-tab-memory" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-white transition-all font-semibold whitespace-nowrap">메모리 동기화 & 가드</button>
-                    <button onclick="switchTab('tab-cleanup')" id="btn-tab-cleanup" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-white transition-all font-semibold whitespace-nowrap">자정 자동 청소 (Diet)</button>
+                    <button onclick="switchTab('tab-api')" id="btn-tab-api" class="px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-white transition-all font-bold whitespace-nowrap">API 로테이션 & 격리</button>
+                    <button onclick="switchTab('tab-search')" id="btn-tab-search" class="px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-white transition-all font-bold whitespace-nowrap">하이브리드 정보 수집</button>
+                    <button onclick="switchTab('tab-memory')" id="btn-tab-memory" class="px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-white transition-all font-bold whitespace-nowrap">메모리 동기화 & 가드</button>
+                    <button onclick="switchTab('tab-cleanup')" id="btn-tab-cleanup" class="px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-white transition-all font-bold whitespace-nowrap">자정 자동 청소 (Diet)</button>
                 </div>
 
                 <!-- Tab Contents -->
                 <div class="space-y-4">
                     <!-- Tab 1: API Rotation -->
-                    <div id="content-tab-api" class="tab-content hidden bg-discord-dark rounded-xl p-6 border border-[#2b2d31] space-y-4">
+                    <div id="content-tab-api" class="tab-content hidden bg-discord-dark rounded-xl p-6 border border-[#2b2d31] space-y-4 animate-fade-in">
                         <div class="flex items-center space-x-2">
-                            <span class="p-1.5 bg-discord-blue/10 rounded text-discord-blue"><i data-lucide="key-round" class="w-5 h-5"></i></span>
-                            <h3 class="text-lg font-bold text-white">다중 키 검증 및 동적 폴트 톨러런스 (Fault Tolerance)</h3>
+                            <span class="p-1.5 bg-discord-blue/10 rounded-lg text-discord-blue"><i data-lucide="key-round" class="w-5 h-5"></i></span>
+                            <h3 class="text-lg font-extrabold text-white">다중 키 검증 및 동적 폴트 톨러런스 (Fault Tolerance)</h3>
                         </div>
                         <p class="text-sm text-slate-300 leading-relaxed">
                             디테봇은 Google Gemini API의 호출량 상한(Rate Limit) 및 폐기 계정으로 인한 작동 중단을 예방하기 위해 독창적인 키 순환 메커니즘을 사용합니다. 
                         </p>
-                        <div class="bg-[#111214] p-4 rounded text-xs font-mono text-slate-400 space-y-1 overflow-x-auto">
-                            <p class="text-slate-500"># ver_7.3.py 다중 키 라운드로빈 로테이션 & 격리 슈도 코드</p>
+                        <div class="bg-[#111214] p-4 rounded-xl text-xs font-mono text-slate-400 space-y-1.5 overflow-x-auto border border-[#2b2d31]">
+                            <p class="text-slate-500">// ver_7.3.py 다중 키 라운드로빈 로테이션 & 격리 슈도 코드</p>
                             <p>1. <span class="text-discord-blue">on_ready</span> 단계에서 <span class="text-[#23a55a]">check_and_validate_api_keys()</span> 비동기 백그라운드 태스크 실행</p>
                             <p>2. 등록된 모든 키에 가벼운 <span class="text-discord-yellow">"ping"</span> 테스트 호출을 수행하여 유효성 선 검사 시행</p>
                             <p>3. 만약 API 응답 오류 중 <span class="text-discord-red">"401" / "unauthenticated" / "service account is deleted"</span> 감지 시 즉각 해당 키 차단</p>
@@ -263,65 +270,65 @@
                     </div>
 
                     <!-- Tab 2: Hybrid Search Pipeline -->
-                    <div id="content-tab-search" class="tab-content hidden bg-discord-dark rounded-xl p-6 border border-[#2b2d31] space-y-4">
+                    <div id="content-tab-search" class="tab-content hidden bg-discord-dark rounded-xl p-6 border border-[#2b2d31] space-y-4 animate-fade-in">
                         <div id="hybrid-search" class="flex items-center space-x-2 scroll-mt-24">
-                            <span class="p-1.5 bg-discord-green/10 rounded text-discord-green"><i data-lucide="globe-2" class="w-5 h-5"></i></span>
-                            <h3 class="text-lg font-bold text-white">초고속 병렬 웹 정보 합성 파이프라인 (Lite GET 기반)</h3>
+                            <span class="p-1.5 bg-discord-green/10 rounded-lg text-discord-green"><i data-lucide="globe-2" class="w-5 h-5"></i></span>
+                            <h3 class="text-lg font-extrabold text-white">초고속 병렬 웹 정보 합성 파이프라인 (Lite GET 기반)</h3>
                         </div>
                         <p class="text-sm text-slate-300 leading-relaxed">
                             공신력 있는 실시간 데이터를 수집하기 위해, 복잡한 셀레늄(Selenium) 동적 브라우저 구동보다 수십 배 빠른 **DuckDuckGo Lite GET 및 Wikipedia API**를 연동합니다.
                         </p>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs font-mono">
-                            <div class="bg-[#111214] p-4 rounded text-slate-300 space-y-2 border border-[#2b2d31]">
-                                <h4 class="text-white font-bold">// 1단계: 검색어 융합 & 우회</h4>
-                                <p class="text-slate-400">사용자가 질문한 문맥을 분석하여 AI가 직접 최적의 검색어 추출 (나무위키, 위키백과 등 검색 지점 주입 강제화)</p>
-                                <p class="text-slate-400">특정 단어(삼성, 디테, Notion 개인정보 등) 감지 시 불필요한 네트워크 대기 없이 하드코딩 메모리 캐시 데이터를 자동 즉시 매핑하여 속도 보장</p>
+                            <div class="bg-[#111214] p-5 rounded-xl text-slate-300 space-y-2 border border-[#2b2d31]">
+                                <h4 class="text-white font-bold flex items-center gap-1.5"><i data-lucide="filter" class="w-4 h-4 text-discord-blue"></i> 1단계: 검색어 융합 & 우회</h4>
+                                <p class="text-slate-400 leading-relaxed">사용자가 질문한 문맥을 분석하여 AI가 직접 최적의 검색어 추출 (나무위키, 위키백과 등 검색 지점 주입 강제화)</p>
+                                <p class="text-slate-400 leading-relaxed">삼성, 디테, Notion 정책 등 고정 트리거 감지 시 네트워크 대기 없이 하드코딩 메모리 캐시 데이터를 즉시 매핑하여 속도 극대화</p>
                             </div>
-                            <div class="bg-[#111214] p-4 rounded text-slate-300 space-y-2 border border-[#2b2d31]">
-                                <h4 class="text-white font-bold">// 2단계: 자가 치유(Self-Healing) 복원</h4>
-                                <p class="text-slate-400">DuckDuckGo가 차단되거나 타임아웃 발생 시, 시스템 다운을 배제하고 즉각 <span class="text-discord-yellow">generate_fallback_search_data()</span> 비동기 백업 엔진 작동</p>
-                                <p class="text-slate-400">Gemini 내장 지식을 사용해 실제와 거의 100% 흡사한 지식 스니펫 및 나무위키 주소를 합성하여 정보 흐름 보전</p>
+                            <div class="bg-[#111214] p-5 rounded-xl text-slate-300 space-y-2 border border-[#2b2d31]">
+                                <h4 class="text-white font-bold flex items-center gap-1.5"><i data-lucide="heart-pulse" class="w-4 h-4 text-discord-green"></i> 2단계: 자가 치유(Self-Healing) 복원</h4>
+                                <p class="text-slate-400 leading-relaxed">DuckDuckGo가 차단되거나 타임아웃 발생 시 시스템 다운을 배제하고 즉각 <span class="text-discord-yellow">generate_fallback_search_data()</span> 비동기 백업 엔진 가동</p>
+                                <p class="text-slate-400 leading-relaxed">Gemini 내장 지식을 활용해 실제와 거의 일치하는 지식 스니펫 및 나무위키 주소를 합성하여 정보 중단 방지</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Tab 3: Memory Sync -->
-                    <div id="content-tab-memory" class="tab-content hidden bg-discord-dark rounded-xl p-6 border border-[#2b2d31] space-y-4">
+                    <div id="content-tab-memory" class="tab-content hidden bg-discord-dark rounded-xl p-6 border border-[#2b2d31] space-y-4 animate-fade-in">
                         <div id="memory-sync" class="flex items-center space-x-2 scroll-mt-24">
-                            <span class="p-1.5 bg-discord-yellow/10 rounded text-discord-yellow"><i data-lucide="database-backup" class="w-5 h-5"></i></span>
-                            <h3 class="text-lg font-bold text-white">영속 기억 보존실 (Real-time DB Syncer)</h3>
+                            <span class="p-1.5 bg-discord-yellow/10 rounded-lg text-discord-yellow"><i data-lucide="database-backup" class="w-5 h-5"></i></span>
+                            <h3 class="text-lg font-extrabold text-white">영속 기억 보존실 (Real-time DB Syncer)</h3>
                         </div>
                         <p class="text-sm text-slate-300 leading-relaxed">
                             디테봇은 대화 기록이 유실되는 현상을 막기 위해 사용자별 런타임 기억을 데이터베이스와 실시간 영속 동기화합니다.
                         </p>
-                        <ul class="text-xs text-slate-300 space-y-2 list-disc pl-5">
-                            <li><strong class="text-white">메모리 제한 및 Capping:</strong> API 토큰 절약을 위해 유저별 세션 대화는 <span class="text-discord-blue">최대 50건(MAX_HISTORY)</span>으로 제한 관리됩니다. 초과 시 선입선출(FIFO) 방식으로 앞 대화를 소멸시킵니다.</li>
-                            <li><strong class="text-white">실시간 백업 트리거:</strong> 유저와 메시지를 주고받은 즉시, <span class="text-discord-green">save_user_memory_to_db()</span>를 비동기로 호출하여 SQLite `user_active_memories` 테이블에 직렬화된 JSON으로 영구 저장합니다.</li>
+                        <ul class="text-xs md:text-sm text-slate-300 space-y-3 list-disc pl-5">
+                            <li><strong class="text-white">메모리 제한 및 Capping:</strong> API 토큰 절약을 위해 유저별 세션 대화는 <span class="text-discord-blue font-semibold">최대 50건(MAX_HISTORY)</span>으로 제한 관리됩니다. 초과 시 선입선출(FIFO) 방식으로 앞 대화를 소멸시킵니다.</li>
+                            <li><strong class="text-white">실시간 백업 트리거:</strong> 유저와 메시지를 주고받은 즉시, <span class="text-discord-green font-semibold">save_user_memory_to_db()</span>를 비동기로 호출하여 SQLite `user_active_memories` 테이블에 직렬화된 JSON으로 영구 저장합니다.</li>
                             <li><strong class="text-white">비파괴 격리 삭제 기법:</strong> 유저가 초기화를 요청할 경우 런타임 풀에서는 삭제되지만, 데이터베이스 `deleted_memories` 아카이브로 온전하게 백업 보존되어 추후에 관리자 패널에서 복구 및 트레이싱 조회가 가능합니다.</li>
                         </ul>
                     </div>
 
                     <!-- Tab 4: Cleanups & Diet -->
-                    <div id="content-tab-cleanup" class="tab-content hidden bg-discord-dark rounded-xl p-6 border border-[#2b2d31] space-y-4">
+                    <div id="content-tab-cleanup" class="tab-content hidden bg-discord-dark rounded-xl p-6 border border-[#2b2d31] space-y-4 animate-fade-in">
                         <div class="flex items-center space-x-2">
-                            <span class="p-1.5 bg-discord-red/10 rounded text-discord-red"><i data-lucide="trash-2" class="w-5 h-5"></i></span>
-                            <h3 class="text-lg font-bold text-white">KST 자정 리셋 스케줄러 & 로그 다이어트 (DB Diet)</h3>
+                            <span class="p-1.5 bg-discord-red/10 rounded-lg text-discord-red"><i data-lucide="trash-2" class="w-5 h-5"></i></span>
+                            <h3 class="text-lg font-extrabold text-white">KST 자정 리셋 스케줄러 & 로그 다이어트 (DB Diet)</h3>
                         </div>
                         <p class="text-sm text-slate-300 leading-relaxed">
                             봇의 데이터베이스가 끝없이 팽창하여 속도가 저하되는 문제점을 해결하기 위해 KST 자정(오전 12:00) 주기적 클린업 프로세스가 자동으로 실행됩니다.
                         </p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
-                            <div class="bg-[#111214] p-4 rounded border border-[#2b2d31] space-y-2">
-                                <h4 class="text-discord-yellow font-bold flex items-center gap-1">
-                                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 일일 활동 랭킹 초기화
+                            <div class="bg-[#111214] p-5 rounded-xl border border-[#2b2d31] space-y-2">
+                                <h4 class="text-discord-yellow font-bold flex items-center gap-1.5 text-sm">
+                                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> 일일 활동 랭킹 초기화
                                 </h4>
-                                <p class="text-slate-400">매일 자정 KST 날짜가 변경되면 `chat_counts` 테이블의 누적 랭킹 정보 데이터를 안전하게 비워 오늘 하루의 새 활동 랭킹을 시작합니다.</p>
+                                <p class="text-slate-400 leading-relaxed">매일 자정 KST 날짜가 변경되면 `chat_counts` 테이블의 누적 랭킹 정보 데이터를 안전하게 비워 오늘 하루의 새 활동 랭킹을 시작합니다.</p>
                             </div>
-                            <div class="bg-[#111214] p-4 rounded border border-[#2b2d31] space-y-2">
-                                <h4 class="text-discord-red font-bold flex items-center gap-1">
-                                    <i data-lucide="hard-drive" class="w-3.5 h-3.5"></i> 30일 로그 청소 (DB 다이어트)
+                            <div class="bg-[#111214] p-5 rounded-xl border border-[#2b2d31] space-y-2">
+                                <h4 class="text-discord-red font-bold flex items-center gap-1.5 text-sm">
+                                    <i data-lucide="hard-drive" class="w-4 h-4"></i> 30일 로그 청소 (DB 다이어트)
                                 </h4>
-                                <p class="text-slate-400">데이터가 장기 적재되어 쓰기 성능이 저하되는 상황을 막고자, 등록 시간 기준 30일이 초과한 정밀 데이터 로그(`message_logs`)는 자동 청소 및 소멸 처리됩니다.</p>
+                                <p class="text-slate-400 leading-relaxed">데이터가 장기 적재되어 쓰기 성능이 저하되는 상황을 막고자, 등록 시간 기준 30일이 초과한 정밀 데이터 로그(`message_logs`)는 자동 청소 및 소멸 처리됩니다.</p>
                             </div>
                         </div>
                     </div>
@@ -332,7 +339,7 @@
             <section id="quickstart" class="scroll-mt-24 space-y-6">
                 <div class="flex items-center space-x-2 text-discord-blue">
                     <i data-lucide="play" class="w-5 h-5"></i>
-                    <span class="text-sm font-semibold tracking-wider uppercase">Quick Deployment</span>
+                    <span class="text-sm font-bold tracking-wider uppercase">Quick Deployment</span>
                 </div>
                 <h2 class="text-2xl md:text-3xl font-extrabold text-white">직접 배포 및 가동 안내</h2>
                 <p class="text-sm text-slate-300 leading-relaxed">
@@ -375,7 +382,7 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
             <section id="database" class="scroll-mt-24 space-y-6">
                 <div class="flex items-center space-x-2 text-discord-yellow">
                     <i data-lucide="table" class="w-5 h-5"></i>
-                    <span class="text-sm font-semibold tracking-wider uppercase">Database Explorer</span>
+                    <span class="text-sm font-bold tracking-wider uppercase">Database Explorer</span>
                 </div>
                 <h2 class="text-2xl md:text-3xl font-extrabold text-white">SQLite3 통합 데이터베이스 명세서</h2>
                 <p class="text-sm text-slate-300">
@@ -455,7 +462,7 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
             <section id="commands" class="scroll-mt-24 space-y-6">
                 <div class="flex items-center space-x-2 text-discord-blue">
                     <i data-lucide="command" class="w-5 h-5"></i>
-                    <span class="text-sm font-semibold tracking-wider uppercase">Reference</span>
+                    <span class="text-sm font-bold tracking-wider uppercase">Reference</span>
                 </div>
                 <h2 class="text-2xl md:text-3xl font-extrabold text-white">디테봇 명령어 사전 및 옵션 가이드</h2>
                 <p class="text-sm text-slate-300 leading-relaxed">
@@ -542,7 +549,7 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
             <section id="simulator" class="scroll-mt-24 space-y-6">
                 <div class="flex items-center space-x-2 text-discord-blue">
                     <i data-lucide="terminal" class="w-5 h-5 animate-pulse"></i>
-                    <span class="text-sm font-semibold tracking-wider uppercase">Interactive Sandbox</span>
+                    <span class="text-sm font-bold tracking-wider uppercase">Interactive Sandbox</span>
                 </div>
                 <h2 class="text-2xl md:text-3xl font-extrabold text-white">디테봇 가상 작동 시뮬레이션 샌드박스</h2>
                 <p class="text-sm text-slate-300">
@@ -557,15 +564,15 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
                             <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">시뮬레이터 제어 센터</h4>
                             <div class="flex flex-col gap-1.5 text-xs">
                                 <label class="text-slate-400 mb-1">가상 AI 모델 변경:</label>
-                                <select id="simModel" class="bg-discord-gray text-white p-2 rounded border border-[#2b2d31] focus:outline-none mb-3">
+                                <select id="simModel" class="bg-discord-gray text-white p-2 rounded-lg border border-[#2b2d31] focus:outline-none mb-3">
                                     <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite (속도 우수)</option>
                                     <option value="gemini-2.5-pro">gemini-2.5-pro (정밀 코딩)</option>
                                 </select>
 
                                 <label class="text-slate-400 mb-1">사용자 가상 상태:</label>
                                 <div class="flex gap-2 mb-3">
-                                    <button onclick="setSimUserState('normal')" id="btn-user-normal" class="flex-1 py-1 px-2 bg-discord-green text-white rounded font-bold">정상 유저</button>
-                                    <button onclick="setSimUserState('banned')" id="btn-user-banned" class="flex-1 py-1 px-2 bg-[#2b2d31] text-slate-300 rounded hover:bg-discord-red/10 hover:text-discord-red border border-transparent transition-all">정지 유저</button>
+                                    <button onclick="setSimUserState('normal')" id="btn-user-normal" class="flex-1 py-2 px-2 bg-discord-green text-white rounded-lg font-bold">정상 유저</button>
+                                    <button onclick="setSimUserState('banned')" id="btn-user-banned" class="flex-1 py-2 px-2 bg-[#2b2d31] text-slate-300 rounded-lg hover:bg-discord-red/10 hover:text-discord-red border border-transparent transition-all">정지 유저</button>
                                 </div>
                             </div>
                         </div>
@@ -573,23 +580,23 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
                         <div>
                             <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">자주 묻는 질문 템플릿</h4>
                             <div class="flex flex-col gap-1">
-                                <button onclick="simulateQuery('오늘 멜론 최신 노래 순위 차트 보여줘')" class="w-full text-left px-2.5 py-1.5 bg-discord-light hover:bg-[#3f4248] text-[11px] rounded text-slate-200 truncate transition-colors flex items-center space-x-1">
+                                <button onclick="simulateQuery('오늘 멜론 최신 노래 순위 차트 보여줘')" class="w-full text-left px-2.5 py-2 bg-discord-light hover:bg-[#3f4248] text-[11px] rounded-lg text-slate-200 truncate transition-colors flex items-center space-x-1.5">
                                     <i data-lucide="music" class="w-3.5 h-3.5 text-discord-green"></i>
                                     <span>멜론 차트 & 가요 추천</span>
                                 </button>
-                                <button onclick="simulateQuery('삼성 갤럭시랑 핵심 정보 검색해줘')" class="w-full text-left px-2.5 py-1.5 bg-discord-light hover:bg-[#3f4248] text-[11px] rounded text-slate-200 truncate transition-colors flex items-center space-x-1">
+                                <button onclick="simulateQuery('삼성 갤럭시랑 핵심 정보 검색해줘')" class="w-full text-left px-2.5 py-2 bg-discord-light hover:bg-[#3f4248] text-[11px] rounded-lg text-slate-200 truncate transition-colors flex items-center space-x-1.5">
                                     <i data-lucide="search" class="w-3.5 h-3.5 text-discord-blue"></i>
                                     <span>삼성 갤럭시 소식 교차 검색</span>
                                 </button>
-                                <button onclick="simulateQuery('개인정보처리방침이랑 디테 이용안내 노션 링크좀')" class="w-full text-left px-2.5 py-1.5 bg-discord-light hover:bg-[#3f4248] text-[11px] rounded text-slate-200 truncate transition-colors flex items-center space-x-1">
+                                <button onclick="simulateQuery('개인정보처리방침이랑 디테 이용안내 노션 링크좀')" class="w-full text-left px-2.5 py-2 bg-discord-light hover:bg-[#3f4248] text-[11px] rounded-lg text-slate-200 truncate transition-colors flex items-center space-x-1.5">
                                     <i data-lucide="shield-check" class="w-3.5 h-3.5 text-discord-yellow"></i>
                                     <span>개인정보 & 공식 규칙 핫링크</span>
                                 </button>
-                                <button onclick="simulateQuery('@everyone 야 이것좀 봐봐 도배한다')" class="w-full text-left px-2.5 py-1.5 bg-discord-light hover:bg-discord-red/15 hover:text-discord-red text-[11px] rounded text-slate-300 truncate transition-colors flex items-center space-x-1">
+                                <button onclick="simulateQuery('@everyone 야 이것좀 봐봐 도배한다')" class="w-full text-left px-2.5 py-2 bg-discord-light hover:bg-discord-red/15 hover:text-discord-red text-[11px] rounded-lg text-slate-300 truncate transition-colors flex items-center space-x-1.5">
                                     <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
                                     <span>금지 멘션 도배 (보안 위반 테스트)</span>
                                 </button>
-                                <button onclick="triggerResetMemory()" class="w-full text-left px-2.5 py-1.5 bg-discord-red/10 hover:bg-discord-red/20 text-[11px] rounded text-discord-red truncate font-semibold transition-colors flex items-center space-x-1">
+                                <button onclick="triggerResetMemory()" class="w-full text-left px-2.5 py-2 bg-discord-red/10 hover:bg-discord-red/20 text-[11px] rounded-lg text-discord-red truncate font-semibold transition-colors flex items-center space-x-1.5">
                                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                     <span>/기억초기화 (대화 세션 포맷)</span>
                                 </button>
@@ -598,8 +605,8 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
 
                         <!-- Backend Dynamic Logging Simulator -->
                         <div class="flex-1 flex flex-col min-h-0">
-                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">실시간 파이프라인 로그</h4>
-                            <div id="backendLogs" class="flex-1 bg-[#1e1f22] rounded p-2.5 font-mono text-[10px] text-[#23a55a] overflow-y-auto space-y-1 border border-[#2b2d31]">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 font-sans">실시간 파이프라인 로그</h4>
+                            <div id="backendLogs" class="flex-1 bg-[#1e1f22] rounded-lg p-2.5 font-mono text-[10px] text-[#23a55a] overflow-y-auto space-y-1 border border-[#2b2d31]">
                                 <p class="text-slate-500">// 대화 전송 시 디테의 실시간 데이터 파이핑 처리가 여기에 디버깅됩니다.</p>
                             </div>
                         </div>
@@ -610,15 +617,15 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
                         <!-- Channel Header -->
                         <div class="px-4 py-3 bg-discord-gray border-b border-[#2b2d31] flex items-center justify-between shrink-0">
                             <div class="flex items-center space-x-2">
-                                <div class="w-8 h-8 rounded-full bg-discord-blue flex items-center justify-center text-white">
+                                <div class="w-8 h-8 rounded-full bg-discord-blue flex items-center justify-center text-white shadow-neonBlue">
                                     <i data-lucide="bot" class="w-5 h-5"></i>
                                 </div>
                                 <div>
                                     <h4 class="text-xs font-bold text-white flex items-center gap-1">
-                                        디테 <span class="bg-[#2b2d31] text-[10px] text-slate-400 px-1 py-0.5 rounded">봇</span>
+                                        디테 <span class="bg-[#2b2d31] text-[10px] text-slate-400 px-1 py-0.5 rounded font-sans">봇</span>
                                     </h4>
-                                    <p class="text-[10px] text-slate-400 flex items-center gap-1">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-discord-green"></span> 현재 채널 작동 허용됨
+                                    <p class="text-[10px] text-slate-400 flex items-center gap-1 font-sans">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-discord-green animate-ping"></span> 현재 채널 작동 허용됨
                                     </p>
                                 </div>
                             </div>
@@ -635,20 +642,20 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
                                         <span class="font-bold text-white">디테</span>
                                         <span class="text-[10px] text-slate-400">오후 11:45</span>
                                     </div>
-                                    <p class="text-slate-200 mt-1">안녕! 🌟 나는 실시간 검색 정보와 최신 가요 멜론 차트 파싱 엔진이 결합된 상냥한 AI 비서 **디테**야! 나랑 같이 깊이 있는 대화를 시작해 볼래? 어떤 것이든 친절하게 알려줄게! 😊</p>
+                                    <p class="text-slate-200 mt-1 leading-relaxed">안녕! 🌟 나는 실시간 검색 정보와 최신 가요 멜론 차트 파싱 엔진이 결합된 상냥한 AI 비서 **디테**야! 나랑 같이 깊이 있는 대화를 시작해 볼래? 어떤 것이든 친절하게 알려줄게! 😊</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Thinking Spinner -->
                         <div id="typingStatus" class="hidden px-4 py-1.5 bg-[#2b2d31]/50 text-[10px] text-slate-400 italic shrink-0">
-                            디테가 생각을 작성하며 문장을 구성하는 중... ✍️
+                            디테가 생각을 작성하며 문장을 구성하는 중... ✍
                         </div>
 
                         <!-- Message Input Form -->
                         <div class="p-4 bg-[#313338] shrink-0">
                             <form onsubmit="handleChatSubmit(event)" class="relative flex items-center">
-                                <input type="text" id="chatInput" placeholder="디테봇에게 물어볼 질문을 입력하세요..." class="w-full px-4 py-2.5 bg-[#383a40] text-xs rounded-lg border border-transparent focus:outline-none focus:border-discord-blue text-white">
+                                <input type="text" id="chatInput" placeholder="디테봇에게 물어볼 질문을 입력하세요..." class="w-full px-4 py-2.5 bg-[#383a40] text-xs rounded-lg border border-transparent focus:outline-none focus:border-discord-blue text-white transition-all">
                                 <button type="submit" class="absolute right-3 text-slate-400 hover:text-white transition-colors">
                                     <i data-lucide="send" class="w-4.5 h-4.5"></i>
                                 </button>
@@ -767,18 +774,23 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.add('hidden');
             });
-            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            const targetContent = document.getElementById(`content-${tabId}`);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+            }
 
             // Button Highlight update
             const tabButtons = ['tab-api', 'tab-search', 'tab-memory', 'tab-cleanup'];
             tabButtons.forEach(btn => {
                 const btnEl = document.getElementById(`btn-${btn}`);
-                if (btn === tabId) {
-                    btnEl.classList.add('border-discord-blue', 'text-white');
-                    btnEl.classList.remove('border-transparent', 'text-slate-400');
-                } else {
-                    btnEl.classList.remove('border-discord-blue', 'text-white');
-                    btnEl.classList.add('border-transparent', 'text-slate-400');
+                if (btnEl) {
+                    if (btn === tabId) {
+                        btnEl.classList.add('border-discord-blue', 'text-white');
+                        btnEl.classList.remove('border-transparent', 'text-slate-400');
+                    } else {
+                        btnEl.classList.remove('border-discord-blue', 'text-white');
+                        btnEl.classList.add('border-transparent', 'text-slate-400');
+                    }
                 }
             });
         }
@@ -792,34 +804,43 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
             const tableNames = ['config', 'api_keys', 'user_active_memories', 'deleted_memories', 'banned_users'];
             tableNames.forEach(t => {
                 const btn = document.getElementById(`btn-db-${t}`);
-                if (t === tableName) {
-                    btn.classList.add('bg-discord-light', 'border-discord-blue');
-                } else {
-                    btn.classList.remove('bg-discord-light', 'border-discord-blue');
+                if (btn) {
+                    if (t === tableName) {
+                        btn.classList.add('bg-discord-light', 'border-discord-blue');
+                    } else {
+                        btn.classList.remove('bg-discord-light', 'border-discord-blue');
+                    }
                 }
             });
 
             // Update Name, description
-            document.getElementById('explorerTableName').innerHTML = `<i data-lucide="database" class="w-4 h-4 text-discord-blue"></i> bot_data.db ➔ ${tableName}`;
-            document.getElementById('explorerTableDesc').innerText = schema.desc;
+            const tableNameEl = document.getElementById('explorerTableName');
+            const tableDescEl = document.getElementById('explorerTableDesc');
+            if (tableNameEl) tableNameEl.innerHTML = `<i data-lucide="database" class="w-4 h-4 text-discord-blue"></i> bot_data.db ➔ ${tableName}`;
+            if (tableDescEl) tableDescEl.innerText = schema.desc;
 
             // Build schema rows
             const tbody = document.getElementById('explorerSchemaBody');
-            tbody.innerHTML = "";
-            schema.fields.forEach(field => {
-                const row = `
-                    <tr class="hover:bg-discord-light/30 transition-colors">
-                        <td class="py-2.5 px-3 text-white font-bold">${field.name}</td>
-                        <td class="py-2.5 px-3 text-discord-yellow">${field.type}</td>
-                        <td class="py-2.5 px-3 text-purple-400 font-semibold">${field.constraint || "NULL 가능"}</td>
-                        <td class="py-2.5 px-3 text-slate-300">${field.desc}</td>
-                    </tr>
-                `;
-                tbody.insertAdjacentHTML('beforeend', row);
-            });
+            if (tbody) {
+                tbody.innerHTML = "";
+                schema.fields.forEach(field => {
+                    const row = `
+                        <tr class="hover:bg-discord-light/30 transition-colors">
+                            <td class="py-2.5 px-3 text-white font-bold">${field.name}</td>
+                            <td class="py-2.5 px-3 text-discord-yellow">${field.type}</td>
+                            <td class="py-2.5 px-3 text-purple-400 font-semibold">${field.constraint || "NULL 가능"}</td>
+                            <td class="py-2.5 px-3 text-slate-300">${field.desc}</td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', row);
+                });
+            }
 
             // Inject Sample Data json
-            document.getElementById('explorerSampleData').textContent = JSON.stringify(schema.sample, null, 2);
+            const sampleDataEl = document.getElementById('explorerSampleData');
+            if (sampleDataEl) {
+                sampleDataEl.textContent = JSON.stringify(schema.sample, null, 2);
+            }
             lucide.createIcons();
         }
 
@@ -837,7 +858,9 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
 
         // Copy text code block
         function copyCode(elementId) {
-            const text = document.getElementById(elementId).innerText;
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            const text = el.innerText;
             const dummy = document.createElement("textarea");
             document.body.appendChild(dummy);
             dummy.value = text;
@@ -852,11 +875,13 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
         function showToast(msg) {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toastMsg');
-            toastMsg.textContent = msg;
-            toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 3000);
+            if (toast && toastMsg) {
+                toastMsg.textContent = msg;
+                toast.classList.remove('hidden');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
         }
 
         // Filter Sidebar Items
@@ -893,21 +918,33 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
             const btnBanned = document.getElementById('btn-user-banned');
 
             if (state === 'normal') {
-                btnNormal.className = "flex-1 py-1 px-2 bg-discord-green text-white rounded font-bold text-xs";
-                btnBanned.className = "flex-1 py-1 px-2 bg-[#2b2d31] text-slate-300 rounded hover:bg-discord-red/10 hover:text-discord-red border border-transparent transition-all text-xs";
+                if (btnNormal) btnNormal.className = "flex-1 py-2 px-2 bg-discord-green text-white rounded-lg font-bold text-xs shadow-neonGreen";
+                if (btnBanned) btnBanned.className = "flex-1 py-2 px-2 bg-[#2b2d31] text-slate-300 rounded-lg hover:bg-discord-red/10 hover:text-discord-red border border-transparent transition-all text-xs";
                 addLog("가상 사용자 상태 변경: '일반(활동 가능)'");
             } else {
-                btnNormal.className = "flex-1 py-1 px-2 bg-[#2b2d31] text-slate-300 rounded hover:bg-discord-green/10 hover:text-discord-green border border-transparent transition-all text-xs";
-                btnBanned.className = "flex-1 py-1 px-2 bg-discord-red text-white rounded font-bold text-xs";
+                if (btnNormal) btnNormal.className = "flex-1 py-2 px-2 bg-[#2b2d31] text-slate-300 rounded-lg hover:bg-discord-green/10 hover:text-discord-green border border-transparent transition-all text-xs";
+                if (btnBanned) btnBanned.className = "flex-1 py-2 px-2 bg-discord-red text-white rounded-lg font-bold text-xs";
                 addLog("가상 사용자 상태 변경: '이용 정지 상태(제재 등록됨)'", "warn");
             }
         }
+
+        // Explicit Global Bindings to prevent VM Sandbox ReferenceErrors
+        window.switchTab = switchTab;
+        window.exploreTable = exploreTable;
+        window.copyDomain = copyDomain;
+        window.copyCode = copyCode;
+        window.filterWiki = filterWiki;
+        window.setSimUserState = setSimUserState;
+        window.simulateQuery = simulateQuery;
+        window.triggerResetMemory = triggerResetMemory;
+        window.handleChatSubmit = handleChatSubmit;
 
         // ==========================================
         // 💬 Sandbox Interaction & Log Emulation Engine
         // ==========================================
         function addLog(text, type = "info") {
             const logs = document.getElementById('backendLogs');
+            if (!logs) return;
             const p = document.createElement('p');
             const now = new Date();
             const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -927,8 +964,11 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
         }
 
         function simulateQuery(query) {
-            document.getElementById('chatInput').value = query;
-            handleChatSubmit(new Event('submit'));
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.value = query;
+                handleChatSubmit(new Event('submit'));
+            }
         }
 
         function triggerResetMemory() {
@@ -944,52 +984,57 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
             addLog("비파괴 보존 필터 작동: deleted_memories 테이블로 이력 백업 시작", "info");
             
             const chatMessages = document.getElementById('chatMessages');
-            const resetNotification = `
-                <div class="flex justify-center my-3">
-                    <span class="bg-discord-red/25 text-discord-red border border-discord-red/30 px-3 py-1.5 rounded-md text-[10px] font-mono flex items-center gap-1.5 shadow-sm">
-                        <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> user_active_memories 초기화 완료 및 격리 백업 저장소 이관 성공
-                    </span>
-                </div>
-            `;
-            chatMessages.insertAdjacentHTML('beforeend', resetNotification);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            if (chatMessages) {
+                const resetNotification = `
+                    <div class="flex justify-center my-3 animate-fade-in">
+                        <span class="bg-discord-red/25 text-discord-red border border-discord-red/30 px-3 py-1.5 rounded-lg text-[10px] font-mono flex items-center gap-1.5 shadow-sm">
+                            <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> user_active_memories 초기화 완료 및 격리 백업 저장소 이관 성공
+                        </span>
+                    </div>
+                `;
+                chatMessages.insertAdjacentHTML('beforeend', resetNotification);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
 
             setTimeout(() => {
                 const response = `
                     <div class="flex items-start space-x-3 animate-fade-in">
-                        <div class="w-8 h-8 rounded-full bg-discord-blue shrink-0 flex items-center justify-center text-white">
+                        <div class="w-8 h-8 rounded-full bg-discord-blue shrink-0 flex items-center justify-center text-white shadow-neonBlue">
                             <i data-lucide="bot" class="w-5 h-5"></i>
                         </div>
                         <div>
                             <div class="flex items-baseline space-x-2">
-                                <span class="font-bold text-white">디테</span>
-                                <span class="bg-discord-blue text-[9px] text-white px-1 py-0.5 rounded">봇</span>
-                                <span class="text-[10px] text-slate-400">방금 전</span>
+                                <span class="font-bold text-white font-sans">디테</span>
+                                <span class="bg-discord-blue text-[9px] text-white px-1 py-0.5 rounded font-sans font-bold">봇</span>
+                                <span class="text-[10px] text-slate-400 font-sans">방금 전</span>
                             </div>
                             <p class="text-slate-200 mt-1 leading-relaxed">✨ **나랑 있었던 소중한 옛날 기억들을 이쁘게 상자에 담아서 창고 데이터베이스에 안전하게 보관해 두었어!** 이제 내 머릿속은 맑고 깨끗하게 비어있는 상태야! 다시 상냥하게 대화의 첫 단추를 채워나갈까? 언제든 네 말을 들을 준비가 되어 있어! 😉🎵</p>
                         </div>
                     </div>
                 `;
-                chatMessages.insertAdjacentHTML('beforeend', response);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+                if (chatMessages) {
+                    chatMessages.insertAdjacentHTML('beforeend', response);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
                 lucide.createIcons();
             }, 1000);
         }
 
         function showBannedMessage() {
             const chatMessages = document.getElementById('chatMessages');
+            if (!chatMessages) return;
             const bannedMsgHtml = `
-                <div class="flex items-start space-x-3">
+                <div class="flex items-start space-x-3 animate-fade-in">
                     <div class="w-8 h-8 rounded-full bg-discord-red shrink-0 flex items-center justify-center text-white">
                         <i data-lucide="shield-alert" class="w-5 h-5"></i>
                     </div>
                     <div>
                         <div class="flex items-baseline space-x-2">
-                            <span class="font-bold text-discord-red">디테 보안가드</span>
-                            <span class="bg-discord-red text-[9px] text-white px-1 py-0.5 rounded">제재</span>
-                            <span class="text-[10px] text-slate-400">방금 전</span>
+                            <span class="font-bold text-discord-red font-sans">디테 보안가드</span>
+                            <span class="bg-discord-red text-[9px] text-white px-1 py-0.5 rounded font-sans font-bold">제재</span>
+                            <span class="text-[10px] text-slate-400 font-sans">방금 전</span>
                         </div>
-                        <p class="text-discord-red font-semibold mt-1">🚨 **사용 제한 알림**: 현재 디테봇 사용 수칙 및 이용 가이드를 성실히 준수하지 않아 서비스 이용이 정지된 사용자이므로 상호작용 명령을 완벽 거부 차단합니다.\n- 정지 사유: \`@everyone 태그 지속 오용 및 커뮤니티 도배 행위\`\n- 정지 기한: \`영구 정지\``</p>
+                        <p class="text-discord-red font-semibold mt-1 leading-relaxed">🚨 **사용 제한 알림**: 현재 디테봇 사용 수칙 및 이용 가이드를 성실히 준수하지 않아 서비스 이용이 정지된 사용자이므로 상호작용 명령을 완벽 거부 차단합니다.<br>- 정지 사유: <code class="bg-[#111214] text-discord-red px-1 rounded font-mono">@everyone 태그 지속 오용 및 커뮤니티 도배 행위</code><br>- 정지 기한: <code class="bg-[#111214] text-discord-red px-1 rounded font-mono">영구 정지</code></p>
                     </div>
                 </div>
             `;
@@ -1001,6 +1046,7 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
         function handleChatSubmit(event) {
             if (event) event.preventDefault();
             const inputEl = document.getElementById('chatInput');
+            if (!inputEl) return;
             const query = inputEl.value.trim();
             if (!query) return;
 
@@ -1008,12 +1054,13 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
 
             // User Message render
             const chatMessages = document.getElementById('chatMessages');
+            if (!chatMessages) return;
             const userHtml = `
-                <div class="flex items-start space-x-3 justify-end text-right">
+                <div class="flex items-start space-x-3 justify-end text-right animate-fade-in">
                     <div class="order-1">
                         <div class="flex items-baseline space-x-2 justify-end">
-                            <span class="font-bold text-white">사용자 (나)</span>
-                            <span class="text-[10px] text-slate-400">방금 전</span>
+                            <span class="font-bold text-white font-sans">사용자 (나)</span>
+                            <span class="text-[10px] text-slate-400 font-sans">방금 전</span>
                         </div>
                         <p class="bg-discord-blue/10 border border-discord-blue/20 text-slate-200 rounded-lg p-2.5 mt-1 inline-block max-w-lg text-left leading-relaxed">${query}</p>
                     </div>
@@ -1040,17 +1087,17 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
                 addLog("도배 및 멘션 차단 필터 경보 발동: 악성 태그 감지!", "error");
                 setTimeout(() => {
                     const blockMsgHtml = `
-                        <div class="flex items-start space-x-3">
+                        <div class="flex items-start space-x-3 animate-fade-in">
                             <div class="w-8 h-8 rounded-full bg-discord-yellow shrink-0 flex items-center justify-center text-white">
                                 <i data-lucide="shield-alert" class="w-5 h-5"></i>
                             </div>
                             <div>
                                 <div class="flex items-baseline space-x-2">
-                                    <span class="font-bold text-[#f0b232]">디테 보안관</span>
-                                    <span class="bg-[#f0b232] text-[9px] text-white px-1 py-0.5 rounded">보안경고</span>
-                                    <span class="text-[10px] text-slate-400">방금 전</span>
+                                    <span class="font-bold text-[#f0b232] font-sans">디테 보안관</span>
+                                    <span class="bg-[#f0b232] text-[9px] text-white px-1 py-0.5 rounded font-sans font-bold">보안경고</span>
+                                    <span class="text-[10px] text-slate-400 font-sans">방금 전</span>
                                 </div>
-                                <p class="text-slate-200 mt-1 leading-relaxed">⚠️ **보안 경고**: 다른 서버 유저를 강제로 태그하여 부르거나 전체 역할 언급을 유도하는 유해 멘션(\`@everyone\`, \`@here\`)이 포함된 질문에는 응답하지 않아! 다른 사람들에게 해가 되는 행동은 자제하고 건전하고 재미있는 주제로만 질문을 남겨줘! 😊</p>
+                                <p class="text-slate-200 mt-1 leading-relaxed">⚠️ **보안 경고**: 다른 서버 유저를 강제로 태그하여 부르거나 전체 역할 언급을 유도하는 유해 멘션(<code class="bg-[#111214] text-discord-yellow px-1 rounded font-mono">@everyone</code>, <code class="bg-[#111214] text-discord-yellow px-1 rounded font-mono">@here</code>)이 포함된 질문에는 응답하지 않아! 다른 사람들에게 해가 되는 행동은 자제하고 건전하고 재미있는 주제로만 질문을 남겨줘! 😊</p>
                             </div>
                         </div>
                     `;
@@ -1066,7 +1113,8 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
             const isSamsung = ["삼성", "갤럭시", "반도체"].some(t => query.includes(t));
             const isPolicy = ["규칙", "개인정보", "약관", "이용안내", "방침"].some(t => query.includes(t));
 
-            document.getElementById('typingStatus').classList.remove('hidden');
+            const typingStatus = document.getElementById('typingStatus');
+            if (typingStatus) typingStatus.classList.remove('hidden');
 
             let thinkProcess = "";
             let generatedOutput = "";
@@ -1114,7 +1162,7 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
                         "병렬 비동기 조회: DDG Lite GET 호출 우회 성공 (status: 200)",
                         "정교 매칭: 디테봇 노션 규칙 핫링크 직접 연계"
                     ];
-                    thinkProcess = "유저가 디테봇의 가이드와 이용약관 등을 질문했어. 시스템 지침 규칙 4번에 따라 공식 노션 링크 `https://app.notion.com/p/39c6106f2b278011a4f6c50b5a854ecd`를 꼭 동봉하여 다정하고 차분하게 정책을 알리고 정직한 이용을 장려하자.";
+                    thinkProcess = "유저가 디테봇의 가이드와 이용약관 등을 질문했어. 시스템 지침 규칙 4번에 따라 공식 노션 링크 `https://app.notion.com/p/39c6106f2b278011a4f5c50b5a854ecd`를 꼭 동봉하여 다정하고 차분하게 정책을 알리고 정직한 이용을 장려하자.";
                     generatedOutput = `디테봇을 모두와 조화롭고 안전하게 사용하기 위한 소중한 약속들을 정리해 줄게! 🛡️📖
 
 디테봇은 소중한 친구들의 개인 정보와 쾌적한 봇 이용 분위기를 유지하기 위해 아래와 같이 **공식 수칙 및 처리 방침**을 투명하게 운용하고 있어!
@@ -1169,20 +1217,20 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
                     }
 
                     const responseHtml = `
-                        <div class="flex items-start space-x-3" id="${msgId}">
-                            <div class="w-8 h-8 rounded-full bg-discord-blue shrink-0 flex items-center justify-center text-white">
+                        <div class="flex items-start space-x-3 animate-fade-in" id="${msgId}">
+                            <div class="w-8 h-8 rounded-full bg-discord-blue shrink-0 flex items-center justify-center text-white shadow-neonBlue">
                                 <i data-lucide="bot" class="w-5 h-5"></i>
                             </div>
                             <div class="flex-1">
                                 <div class="flex items-baseline space-x-2">
-                                    <span class="font-bold text-white">디테</span>
-                                    <span class="bg-discord-blue text-[9px] text-white px-1 py-0.5 rounded">봇</span>
-                                    <span class="text-[10px] text-slate-400">${resTime}</span>
+                                    <span class="font-bold text-white font-sans">디테</span>
+                                    <span class="bg-discord-blue text-[9px] text-white px-1 py-0.5 rounded font-sans font-bold">봇</span>
+                                    <span class="text-[10px] text-slate-400 font-sans">${resTime}</span>
                                 </div>
                                 <div class="text-[10px] text-slate-500 font-mono mt-0.5">사용 모델: ${activeModel}</div>
 
                                 <!-- Emulated thinking process box -->
-                                <div class="mt-2 bg-discord-dark p-2.5 rounded text-[11px] text-slate-400 font-mono border border-[#2b2d31]">
+                                <div class="mt-2 bg-discord-dark p-2.5 rounded-lg text-[11px] text-slate-400 font-mono border border-[#2b2d31] shadow-inner">
                                     <p class="text-[10px] text-discord-blue uppercase font-bold not-italic tracking-wider mb-1">🧠 실시간 AI 추론 가공 분석 (&lt;think&gt;):</p>
                                     ${thinkProcess}
                                 </div>
@@ -1192,7 +1240,7 @@ nohup python ver_7.3.py > ditebot.log 2>&1 &</pre>
                         </div>
                     `;
 
-                    document.getElementById('typingStatus').classList.add('hidden');
+                    if (typingStatus) typingStatus.classList.add('hidden');
                     chatMessages.insertAdjacentHTML('beforeend', responseHtml);
                     chatMessages.scrollTop = chatMessages.scrollHeight;
                     lucide.createIcons();
